@@ -42,3 +42,4 @@ next-env.d.ts
 # other
 DEST_DIR*/
 env/
+prisma/migrations/
