@@ -1,24 +1,41 @@
-# myaccounting-app
-My Accounting App
+# My Accounting App
 
-prerequisite:
-- python
+## Prerequisite
 
-you can use nodeenv if you are running multiple nodejs environment
-https://pypi.org/project/nodeenv/
+- Python
 
-install nodeenv with pip
+You can use `nodeenv` if you are running multiple Node.js environments. [Learn more about nodeenv](https://pypi.org/project/nodeenv/).
+
+### Install nodeenv with pip
+
+```bash
 sudo pip install nodeenv
+```
 
-create node environment
-using node 20.17.0 because niagahoster latest nodeversion is 20.17.0
-nodeenv --node=20.17.0 env 
+### Create Node Environment
 
-Activate new environment:
-. env/bin/activate or source env/bin/activate
+Using Node.js 20.17.0 because Niagahoster's latest Node.js version is 20.17.0.
 
+```bash
+nodeenv --node=20.17.0 env
+```
+
+### Activate New Environment
+
+```bash
+. env/bin/activate
+# or
+source env/bin/activate
+```
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+
+## Modules Used
+
+- **Front-end Component**: [Ant Design](https://ant.design)
+- **Authentication**: [NextAuth.js](https://next-auth.js.org)
+- **Database**: MySQL
+- **ORM**: [Prisma](https://www.prisma.io)
 
 ## Getting Started
 
@@ -40,14 +57,22 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Local Development with Docker
+
+You can use the provided `docker-compose` file for local development. Execute the following command:
+
+```bash
+docker-compose -f docker-compose.mysql.yml up -d
+```
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- [Next.js Documentation](https://nextjs.org/docs) - Learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - An interactive Next.js tutorial.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - Your feedback and contributions are welcome!
 
 ## Deploy on Vercel
 
