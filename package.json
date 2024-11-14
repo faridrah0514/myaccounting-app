@@ -11,12 +11,13 @@
     "migrate:dev": "prisma migrate dev"
   },
   "dependencies": {
+    "@ant-design/nextjs-registry": "^1.0.1",
     "@prisma/client": "^5.22.0",
     "@types/bcrypt": "^5.0.2",
     "antd": "^5.22.0",
     "bcrypt": "^5.1.1",
     "mysql2": "^3.11.4",
-    "next": "15.0.3",
+    "next": "14.2.18",
     "next-auth": "^4.24.10",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
