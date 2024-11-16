@@ -7,7 +7,6 @@ declare module 'next-auth' {
   interface User {
     username?: string;
     role?: string;
-    editable_until?: number;
   }
 
   interface Session {
@@ -15,13 +14,11 @@ declare module 'next-auth' {
       id?: number;
       username?: string;
       role?: string;
-      editable_until?: number;
-    } & DefaultUser;
+    } | DefaultUser;
   }
 
   interface Token {
     username?: string;
     role?: string;
-    editable_until?: number;
   }
 }
