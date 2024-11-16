@@ -1,10 +1,9 @@
-// app/api/auth/[...nextauth]/route.ts
-
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcrypt';
-import mysql from 'mysql2/promise';
-import { openDB } from '@/helper/db';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 const handler = NextAuth({
   providers: [
@@ -20,23 +19,32 @@ const handler = NextAuth({
         }
 
         try {
-          const connection = openDB();
-          const [rows] = await connection.query('SELECT * FROM users WHERE username = ?', [credentials.username]);
-          connection.end();
+          // Use Prisma to find the user by username
+          const user = await prisma.user.findUnique({
+            where: { username: credentials.username },
+          });
 
-          const userRows = rows as mysql.RowDataPacket[];
-
-          if (userRows.length === 0) {
+          // If user is not found, return null
+          if (!user) {
             return null;
           }
 
-          const user = userRows[0];
-
-          const isPasswordValid = await bcrypt.compare(credentials.password, user.password_hash);
+          // Compare the provided password with the stored hashed password
+          const isPasswordValid = await bcrypt.compare(
+            credentials.password,
+            user.passwordHash
+          );
 
           if (isPasswordValid) {
-            return { id: user.id, name: user.username, username: user.username, role: user.role, editable_until: user.editable_until };
+            // Return the user data to include in the session
+            return {
+              id: user.id.toString(),
+              name: user.username,
+              username: user.username,
+              role: user.role
+            };
           } else {
+            // If the password is invalid, return null
             return null;
           }
         } catch (error) {
@@ -48,24 +56,24 @@ const handler = NextAuth({
   ],
   session: {
     strategy: 'jwt',
-    maxAge: 30 * 60 * 8,
+    maxAge: 8 * 60 * 60, // 8 hours
   },
   pages: {
-    signIn: '/login',
+    signIn: '/login', // Redirect to a custom login page
   },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
         token.username = user.username;
         token.role = user.role;
-        token.editable_until = user.editable_until
       }
       return token;
     },
     async session({ session, token }) {
-      session.user.username = token.username as string;
-      session.user.role = token.role as string;
-      session.user.editable_until = token.editable_until as number;
+      session.user = {
+        username: token.username as string,
+        role: token.role as string,
+      };
       return session;
     },
   },
