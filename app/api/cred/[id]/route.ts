@@ -1,9 +1,9 @@
-import { openDB } from "@/helper/db";
 import dayjs from "dayjs";
-import { RowDataPacket } from "mysql2";
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcrypt";
+import { PrismaClient } from "@prisma/client";
 
+const prisma = new PrismaClient();
 const SALT_ROUNDS = 10;
 
 // GET request to fetch user details by ID
@@ -11,18 +11,18 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
   const userId = params.id;
 
   try {
-    const conn = openDB();
-    const [rows] = await conn.query<RowDataPacket[]>("SELECT * FROM users WHERE id = ?", [userId]);
-    conn.end();
+    // Find user details using prisma
+    const user = await prisma.user.findUnique({
+      where: { id: parseInt(userId)}
+    });
 
-    if (rows.length === 0) {
+    if (!user) {
       return NextResponse.json({ message: "User not found" }, { status: 404 });
     }
 
-    const user = rows[0];
     const formattedUser = {
       ...user,
-      created_at: dayjs(user.created_at).format('DD-MM-YYYY'),
+      created_at: dayjs(user.createdAt).format('DD-MM-YYYY'),
     };
 
     return NextResponse.json(formattedUser, { status: 200 });
@@ -45,32 +45,37 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
       if (!username || !role) {
         return NextResponse.json({ message: "Username and role are required" }, { status: 400 });
       }
+      
+      // Find user details using prisma
+      const user = await prisma.user.findUnique({
+        where: { id: parseInt(userId)}
+      });
 
-      const conn = openDB();
-
-      // Check if the user exists
-      const [existingUser] = await conn.query<RowDataPacket[]>("SELECT * FROM users WHERE id = ?", [userId]);
-
-      if (existingUser.length === 0) {
-        conn.end();
+      if (!user) {
         return NextResponse.json({ message: "User not found" }, { status: 404 });
       }
 
       // Update user details (password only if provided)
       if (password) {
         const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
-        await conn.query(
-          "UPDATE users SET username = ?, password_hash = ?, role = ?, updated_at = NOW() WHERE id = ?",
-          [username, hashedPassword, role, userId]
-        );
+        
+        await prisma.user.update({
+          where: { id: parseInt(userId) },
+          data: {
+            username,
+            passwordHash: hashedPassword,
+            role
+          }
+        });
       } else {
-        await conn.query(
-          "UPDATE users SET username = ?, role = ?, updated_at = NOW() WHERE id = ?",
-          [username, role, userId]
-        );
+        await prisma.user.update({
+          where: { id: parseInt(userId) },
+          data: {
+            username,
+            role
+          }
+        });
       }
-
-      conn.end();
 
       return NextResponse.json({ message: "User updated successfully" }, { status: 200 });
     }
