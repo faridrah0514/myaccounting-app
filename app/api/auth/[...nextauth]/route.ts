@@ -3,6 +3,11 @@ import CredentialsProvider from 'next-auth/providers/credentials'
 import bcrypt from 'bcrypt'
 import { PrismaClient } from '@prisma/client'
 
+import logger from '@/app/utils/logger'
+
+const logTag = 'auth'
+const log = logger(logTag)
+
 const prisma = new PrismaClient()
 
 const handler = NextAuth({
@@ -15,6 +20,7 @@ const handler = NextAuth({
       },
       async authorize(credentials) {
         if (!credentials?.username || !credentials?.password) {
+          log.info('username / password is empty')
           return null
         }
 
@@ -34,6 +40,7 @@ const handler = NextAuth({
 
           if (isPasswordValid) {
             // Return the user data to include in the session
+            log.info(`User ${user.username} authenticated`)
             return {
               id: user.id.toString(),
               name: user.username,
@@ -45,7 +52,7 @@ const handler = NextAuth({
             return null
           }
         } catch (error) {
-          console.error('Error during authentication:', error)
+          log.error(`Error during authentication: ${error}`)
           return null
         }
       },
@@ -70,6 +77,7 @@ const handler = NextAuth({
       session.user = {
         username: token.username as string,
         role: token.role as string,
+        name: token.name as string,
       }
       return session
     },

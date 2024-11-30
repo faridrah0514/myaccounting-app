@@ -20,12 +20,18 @@
       "extends": [
         "next/core-web-vitals",
         "eslint:recommended",
-        "plugin:@typescript-eslint/recommended",
         "plugin:react/recommended",
+        "plugin:@typescript-eslint/recommended",
         "plugin:react-hooks/recommended",
         "prettier"
       ],
       "rules": {
+        "newline-per-chained-call": [
+          "error",
+          {
+            "ignoreChainWithDepth": 10 // Adjust based on how deep you want the rule to apply
+          }
+        ],
         "react-hooks/rules-of-hooks": "error",
         "react-hooks/exhaustive-deps": "warn",
         "prettier/prettier": [
