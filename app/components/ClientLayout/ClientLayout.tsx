@@ -1,21 +1,13 @@
-"use client";
+'use client'
 
-import { usePathname } from "next/navigation";
-import DefaultLayout from "../DefaultLayout/DefaultLayout";
+import { usePathname } from 'next/navigation'
+import DefaultLayout from '../DefaultLayout/DefaultLayout'
 
-export default function ClientLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const pathname = usePathname();
+export default function ClientLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname()
 
   // Define paths where the DefaultLayout should be skipped
-  const isAuthPage = pathname === "/login"; // Add other auth pages if needed
+  const isAuthPage = pathname === '/login' // Add other auth pages if needed
 
-  return isAuthPage ? (
-    <>{children}</>
-  ) : (
-    <DefaultLayout>{children}</DefaultLayout>
-  );
+  return isAuthPage ? <>{children}</> : <DefaultLayout>{children}</DefaultLayout>
 }
