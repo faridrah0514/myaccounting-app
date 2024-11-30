@@ -1,13 +1,13 @@
-import mysql, { ConnectionOptions } from 'mysql2';
+import mysql, { ConnectionOptions } from 'mysql2'
 
 const connection: ConnectionOptions = {
-    host: process.env.MYSQL_HOST,
-    user: process.env.MYSQL_USERNAME,
-    password: process.env.MYSQL_PWD,
-    database: process.env.MYSQL_DATABASE,
-    port: 3306,
+  host: process.env.MYSQL_HOST,
+  user: process.env.MYSQL_USERNAME,
+  password: process.env.MYSQL_PWD,
+  database: process.env.MYSQL_DATABASE,
+  port: 3306,
 }
 
 export function openDB() {
-    return mysql.createConnection(connection).promise()
+  return mysql.createConnection(connection).promise()
 }

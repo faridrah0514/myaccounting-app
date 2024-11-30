@@ -1,3 +1,53 @@
 {
-  "extends": ["next/core-web-vitals", "next/typescript"]
+  "root": true,
+  "ignorePatterns": ["node_modules/", "dist/", "build/"],
+  "overrides": [
+    {
+      "files": ["**/*.{js,mjs,cjs,ts,jsx,tsx}"],
+      "env": {
+        "node": true
+      },
+      "parser": "@typescript-eslint/parser",
+      "parserOptions": {
+        "ecmaVersion": "latest",
+        "sourceType": "module",
+        "ecmaFeatures": {
+          "jsx": true
+        },
+        "project": "./tsconfig.json"
+      },
+      "plugins": ["react", "react-hooks", "@typescript-eslint", "prettier"],
+      "extends": [
+        "next/core-web-vitals",
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:react/recommended",
+        "plugin:react-hooks/recommended",
+        "prettier"
+      ],
+      "rules": {
+        "react-hooks/rules-of-hooks": "error",
+        "react-hooks/exhaustive-deps": "warn",
+        "prettier/prettier": [
+          "warn",
+          {
+            "singleQuote": true,
+            "trailingComma": "es5",
+            "tabWidth": 2,
+            "printWidth": 120,
+            "semi": false
+          }
+        ],
+        "no-console": "warn",
+        "@typescript-eslint/no-unused-vars": [
+          "error",
+          {
+            "argsIgnorePattern": "^_"
+          }
+        ],
+        "@typescript-eslint/no-explicit-any": "off",
+        "react/react-in-jsx-scope": "off"
+      }
+    }
+  ]
 }
