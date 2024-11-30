@@ -20,7 +20,6 @@ export default function Page() {
     })
 
     if (result?.error) {
-      console.log(result)
       setError('Invalid credentials')
     } else {
       router.push('/')

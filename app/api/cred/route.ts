@@ -2,6 +2,10 @@ import { PrismaClient } from '@prisma/client'
 import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcrypt'
 import dayjs from 'dayjs'
+import logger from '@/app/utils/logger'
+
+const logTag = 'cred'
+const log = logger(logTag)
 
 const prisma = new PrismaClient()
 const SALT_ROUNDS = 10
@@ -9,7 +13,7 @@ const SALT_ROUNDS = 10
 // GET request to fetch users
 export async function GET() {
   try {
-    console.log('Fetching users...')
+    log.info('Fetching users...')
     const users = await prisma.user.findMany({
       select: {
         id: true,
@@ -28,7 +32,7 @@ export async function GET() {
       headers: { 'Content-Type': 'application/json' },
     })
   } catch (error) {
-    console.error('Error fetching users:', error)
+    log.error('Error fetching users:', error)
     return NextResponse.json({ message: 'Internal server error' }, { status: 500 })
   }
 }
@@ -104,7 +108,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: 'Password updated successfully' })
     }
   } catch (error) {
-    console.error('Error handling request:', error)
+    log.error('Error handling request:', error)
     return NextResponse.json({ message: 'Internal server error' }, { status: 500 })
   }
 }
@@ -138,7 +142,7 @@ export async function DELETE(req: NextRequest) {
 
     return NextResponse.json({ message: 'Invalid request type' }, { status: 400 })
   } catch (error) {
-    console.error('Error deleting user:', error)
+    log.error('Error deleting user:', error)
     return NextResponse.json({ message: 'Internal server error' }, { status: 500 })
   }
 }
