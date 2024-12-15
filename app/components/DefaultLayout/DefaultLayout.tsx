@@ -55,7 +55,7 @@ export default function DefaultLayout({
 
   if (status === "loading") {
     return (
-      <div className="flex justify-center items-center h-screen bg-gray-50">
+      <div className="flex justify-center items-center h-screen">
         <Spin tip="Loading" size="large">
           <div style={contentStyle} />
         </Spin>
@@ -168,7 +168,17 @@ export default function DefaultLayout({
             background: colorBgContainer,
           }}
         >
-          <div className=" bg-white">{children}</div>
+          <div className=" bg-white">
+            <ConfigProvider
+              theme={{
+                token: {
+                  borderRadius: 13,
+                },
+              }}
+            >
+              {children}
+            </ConfigProvider>
+          </div>
         </Content>
       </Layout>
     </Layout>

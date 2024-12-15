@@ -1,7 +1,8 @@
 "use client"
 
-import React from "react"
-import { Card, Button, Dropdown, Menu, Flex, Grid, Typography, Table, Radio, Input, DatePicker } from "antd"
+import React, { useState } from "react"
+import { useRouter } from "next/navigation"
+import { Card, Button, Dropdown, Menu, Flex, Grid, Typography, Table, Radio, Input, DatePicker, Switch } from "antd"
 import {
   PlusOutlined,
   PrinterOutlined,
@@ -17,7 +18,28 @@ const { useBreakpoint } = Grid
 const { RangePicker } = DatePicker
 
 const BiayaPage: React.FC = () => {
+  const router = useRouter()
   const screens = useBreakpoint()
+
+  const [visibleColumns, setVisibleColumns] = useState({
+    tanggal: true,
+    nomor: true,
+    referensi: true,
+    penerima: true,
+    termin: false,
+    tag: false,
+    status: true,
+    tanggalPembayaran: false,
+    tanggalPelunasan: false,
+    sisaTagihan: true,
+    total: true,
+  })
+
+  type ColumnKeys = keyof typeof visibleColumns
+
+  const handleColumnToggle = (key: ColumnKeys) => {
+    setVisibleColumns((prev) => ({ ...prev, [key]: !prev[key] }))
+  }
 
   const summaryCards = [
     { color: "bg-yellow-500", label: "Bulan Ini", value: 0, count: 0 },
@@ -45,14 +67,34 @@ const BiayaPage: React.FC = () => {
   )
 
   const columns = [
-    { title: "Tanggal", dataIndex: "tanggal", key: "tanggal" },
-    { title: "Nomor", dataIndex: "nomor", key: "nomor", render: (text: string) => <a>{text}</a> },
-    { title: "Referensi", dataIndex: "referensi", key: "referensi" },
-    { title: "Penerima", dataIndex: "penerima", key: "penerima" },
-    { title: "Status", dataIndex: "status", key: "status" },
-    { title: "Sisa Tagihan", dataIndex: "sisaTagihan", key: "sisaTagihan" },
-    { title: "Total", dataIndex: "total", key: "total" },
-  ]
+    { title: "Tanggal", dataIndex: "tanggal", key: "tanggal", hidden: !visibleColumns.tanggal },
+    {
+      title: "Nomor",
+      dataIndex: "nomor",
+      key: "nomor",
+      hidden: !visibleColumns.nomor,
+      render: (text: string) => <a>{text}</a>,
+    },
+    { title: "Referensi", dataIndex: "referensi", key: "referensi", hidden: !visibleColumns.referensi },
+    { title: "Penerima", dataIndex: "penerima", key: "penerima", hidden: !visibleColumns.penerima },
+    { title: "Termin", dataIndex: "termin", key: "termin", hidden: !visibleColumns.termin },
+    { title: "Tag", dataIndex: "tag", key: "tag", hidden: !visibleColumns.tag },
+    { title: "Status", dataIndex: "status", key: "status", hidden: !visibleColumns.status },
+    {
+      title: "Tanggal Pembayaran",
+      dataIndex: "tanggalPembayaran",
+      key: "tanggalPembayaran",
+      hidden: !visibleColumns.tanggalPembayaran,
+    },
+    {
+      title: "Tanggal Pelunasan",
+      dataIndex: "tanggalPelunasan",
+      key: "tanggalPelunasan",
+      hidden: !visibleColumns.tanggalPelunasan,
+    },
+    { title: "Sisa Tagihan", dataIndex: "sisaTagihan", key: "sisaTagihan", hidden: !visibleColumns.sisaTagihan },
+    { title: "Total", dataIndex: "total", key: "total", hidden: !visibleColumns.total },
+  ].filter((column) => !column.hidden)
 
   const data = [
     {
@@ -61,7 +103,10 @@ const BiayaPage: React.FC = () => {
       nomor: "EXP/00041",
       referensi: "",
       penerima: "Darijan Purwanto Januari M.T. Rajasa",
+      termin: "1",
       status: "Lunas",
+      tanggalPembayaran: "11/11/2024",
+      tanggalPelunasan: "11/11/2024",
       sisaTagihan: "0",
       total: "639.000",
     },
@@ -71,7 +116,10 @@ const BiayaPage: React.FC = () => {
       nomor: "EXP/00040",
       referensi: "",
       penerima: "Kamila Puspasari Purwanti",
+      termin: "2",
       status: "Belum Dibayar",
+      tanggalPembayaran: "",
+      tanggalPelunasan: "",
       sisaTagihan: "908.300",
       total: "908.300",
     },
@@ -81,41 +129,30 @@ const BiayaPage: React.FC = () => {
       nomor: "EXP/00039",
       referensi: "",
       penerima: "Agnes Riyanti Nababan",
+      termin: "1",
       status: "Lunas",
+      tanggalPembayaran: "07/11/2024",
+      tanggalPelunasan: "07/11/2024",
       sisaTagihan: "0",
       total: "1.629.000",
     },
-    {
-      key: "4",
-      tanggal: "07/11/2024",
-      nomor: "EXP/00038",
-      referensi: "",
-      penerima: "Darijan Purwanto Januari M.T. Rajasa",
-      status: "Lunas",
-      sisaTagihan: "0",
-      total: "873.000",
-    },
-    {
-      key: "5",
-      tanggal: "06/11/2024",
-      nomor: "EXP/00037",
-      referensi: "",
-      penerima: "Agnes Riyanti Nababan",
-      status: "Belum Dibayar",
-      sisaTagihan: "620.000",
-      total: "620.000",
-    },
-    {
-      key: "6",
-      tanggal: "06/11/2024",
-      nomor: "EXP/00036",
-      referensi: "",
-      penerima: "Cinta Anggraini S.T. Purwanti",
-      status: "Belum Dibayar",
-      sisaTagihan: "2.187.000",
-      total: "2.187.000",
-    },
   ]
+
+  const columnFilterMenu = (
+    <Menu>
+      {Object.keys(visibleColumns).map((key) => (
+        <Menu.Item key={key}>
+          <Switch
+            checked={visibleColumns[key as keyof typeof visibleColumns]}
+            onChange={() => handleColumnToggle(key as ColumnKeys)}
+            size="small"
+            className="mr-2"
+          />
+          {key.replace(/([A-Z])/g, " $1").replace(/^./, (str) => str.toUpperCase())}
+        </Menu.Item>
+      ))}
+    </Menu>
+  )
 
   return (
     <div>
@@ -125,19 +162,17 @@ const BiayaPage: React.FC = () => {
           <Typography.Text className="text-2xl font-semibold">Biaya</Typography.Text>
           <Flex gap="small">
             <Dropdown overlay={laporanMenu} trigger={["click"]}>
-              <Button shape="round" icon={<BarChartOutlined />}>
+              <Button icon={<BarChartOutlined />}>
                 Lihat Laporan <DownOutlined />
               </Button>
             </Dropdown>
             <Dropdown overlay={importMenu} trigger={["click"]}>
-              <Button shape="round" icon={<UploadOutlined />}>
+              <Button icon={<UploadOutlined />}>
                 Import <DownOutlined />
               </Button>
             </Dropdown>
-            <Button shape="round" icon={<PrinterOutlined />}>
-              Print
-            </Button>
-            <Button shape="round" type="primary" icon={<PlusOutlined />}>
+            <Button icon={<PrinterOutlined />}>Print</Button>
+            <Button type="primary" icon={<PlusOutlined />} onClick={() => router.push("/biaya/tambah")}>
               Tambah Biaya
             </Button>
           </Flex>
@@ -166,14 +201,14 @@ const BiayaPage: React.FC = () => {
       {/* Table Action Buttons */}
       <Flex className="mt-5 mb-3" justify="space-between" align="center">
         <Flex gap="small">
-          <Button icon={<FilterOutlined />} shape="round">
-            Filter
-          </Button>
-          <Button icon={<UnorderedListOutlined />} shape="round"></Button>
+          <Button icon={<FilterOutlined />}>Filter</Button>
+          <Dropdown overlay={columnFilterMenu} trigger={["click"]}>
+            <Button icon={<UnorderedListOutlined />}></Button>
+          </Dropdown>
         </Flex>
         <Flex gap="small" align="center">
           <Input placeholder="Cari" prefix={<SearchOutlined />} style={{ width: 200 }} />
-          <RangePicker style={{ borderRadius: "8px" }} />
+          <RangePicker />
         </Flex>
       </Flex>
 
@@ -194,8 +229,8 @@ const BiayaPage: React.FC = () => {
       </Flex>
 
       {/* Table Section */}
-      <Card className="rounded-xl">
-        <Table columns={columns} dataSource={data} pagination={{ pageSize: 10 }} />
+      <Card className="rounded-xl" style={{ overflowX: "auto" }}>
+        <Table columns={columns} dataSource={data} pagination={{ pageSize: 100 }} />
       </Card>
     </div>
   )
