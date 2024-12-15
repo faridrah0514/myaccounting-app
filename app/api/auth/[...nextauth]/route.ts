@@ -1,11 +1,11 @@
-import NextAuth from 'next-auth'
-import CredentialsProvider from 'next-auth/providers/credentials'
-import bcrypt from 'bcrypt'
-import { PrismaClient } from '@prisma/client'
+import NextAuth from "next-auth"
+import CredentialsProvider from "next-auth/providers/credentials"
+import bcrypt from "bcrypt"
+import { PrismaClient } from "@prisma/client"
 
-import logger from '@/app/utils/logger'
+import logger from "@/app/utils/logger"
 
-const logTag = 'auth'
+const logTag = "auth"
 const log = logger(logTag)
 
 const prisma = new PrismaClient()
@@ -13,14 +13,14 @@ const prisma = new PrismaClient()
 const handler = NextAuth({
   providers: [
     CredentialsProvider({
-      name: 'Credentials',
+      name: "Credentials",
       credentials: {
-        username: { label: 'Username', type: 'text' },
-        password: { label: 'Password', type: 'password' },
+        username: { label: "Username", type: "text" },
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
         if (!credentials?.username || !credentials?.password) {
-          log.info('username / password is empty')
+          log.info("username / password is empty")
           return null
         }
 
@@ -59,11 +59,11 @@ const handler = NextAuth({
     }),
   ],
   session: {
-    strategy: 'jwt',
+    strategy: "jwt",
     maxAge: 8 * 60 * 60, // 8 hours
   },
   pages: {
-    signIn: '/login', // Redirect to a custom login page
+    signIn: "/login", // Redirect to a custom login page
   },
   callbacks: {
     async jwt({ token, user }) {

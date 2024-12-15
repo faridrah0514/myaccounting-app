@@ -16,10 +16,11 @@
     "check": "npm run lint && npm run type-check && npm run test"
   },
   "dependencies": {
+    "@ant-design/icons": "^5.5.2",
     "@ant-design/nextjs-registry": "^1.0.1",
     "@prisma/client": "^5.22.0",
     "@types/bcrypt": "^5.0.2",
-    "antd": "^5.22.0",
+    "antd": "^5.22.5",
     "bcrypt": "^5.1.1",
     "mysql2": "^3.11.4",
     "next": "14.2.18",
