@@ -1,8 +1,8 @@
 // types/next-auth.d.ts
 
-import 'next-auth'
+import "next-auth"
 
-declare module 'next-auth' {
+declare module "next-auth" {
   interface User {
     username?: string
     role?: string
