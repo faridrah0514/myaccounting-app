@@ -1,0 +1,72 @@
+model Country {
+    id        Int        @id @default(autoincrement())
+    name      String
+    createdAt DateTime   @default(now()) @map("created_at")
+    updatedAt DateTime   @updatedAt @map("updated_at")
+    province  Province[]
+
+    @@map("country")
+}
+
+model Province {
+    id         Int      @id @default(autoincrement())
+    name       String
+    provinceId Int      @map("province_id")
+    countryId  Int      @map("country_id")
+    createdAt  DateTime @default(now()) @map("created_at")
+    updatedAt  DateTime @updatedAt @map("updated_at")
+
+    country Country @relation(fields: [countryId], references: [id])
+    city    City[]
+
+    @@map("province")
+}
+
+model City {
+    id         Int      @id @default(autoincrement())
+    name       String
+    cityId     Int      @map("city_id")
+    provinceId Int      @map("province_id")
+    createdAt  DateTime @default(now()) @map("created_at")
+    updatedAt  DateTime @updatedAt @map("updated_at")
+
+    province Province   @relation(fields: [provinceId], references: [id])
+    district District[]
+
+    @@map("city")
+}
+
+model District {
+    id         Int      @id @default(autoincrement())
+    name       String
+    districtId Int      @map("district_id")
+    cityId     Int      @map("city_id")
+    createdAt  DateTime @default(now()) @map("created_at")
+    updatedAt  DateTime @updatedAt @map("updated_at")
+
+    city    City      @relation(fields: [cityId], references: [id])
+    village Village[]
+
+    @@map("district")
+}
+
+model Village {
+    id         Int      @id @default(autoincrement())
+    name       String
+    villageId  Int      @map("village_id")
+    districtId Int      @map("district_id")
+    createdAt  DateTime @default(now()) @map("created_at")
+    updatedAt  DateTime @updatedAt @map("updated_at")
+
+    district District @relation(fields: [districtId], references: [id])
+
+    @@map("village")
+}
+
+model Wilayah {
+    id   Int    @id @default(autoincrement())
+    kode String @unique
+    nama String
+
+    @@map("wilayah")
+}
