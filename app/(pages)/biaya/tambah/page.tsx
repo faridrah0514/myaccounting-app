@@ -5,8 +5,8 @@ import { Card, Form, Input, Button, Select, message, DatePicker, Switch, Row, Co
 import { UploadOutlined, MinusCircleOutlined, PlusOutlined } from "@ant-design/icons"
 import { useRouter } from "next/navigation"
 import dayjs from "dayjs"
-import TambahKontakDrawer from "@/app/components/Biaya/TambahKontakDrawer"
-import TambahAkunDrawer from "@/app/components/Biaya/TambahAkunDrawer"
+import TambahKontakDrawer from "@/app/components/Kontak/TambahKontakDrawer"
+import TambahAkunDrawer from "@/app/components/Akun/TambahAkunDrawer"
 
 const { Option } = Select
 

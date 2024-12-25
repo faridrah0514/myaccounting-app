@@ -1,4 +1,4 @@
-import { PieChartOutlined } from "@ant-design/icons"
+import { PieChartOutlined, PhoneOutlined } from "@ant-design/icons"
 import type { MenuProps } from "antd"
 import Link from "next/link"
 
@@ -16,6 +16,9 @@ function getItem(label: React.ReactNode, key: React.Key, icon?: React.ReactNode,
 //prettier-ignore
 export const items: MenuItem[] = [
   getItem(<Link href="/biaya">Biaya</Link>, "Biaya", <PieChartOutlined />,),
+  { type: "divider" },
+  getItem(<Link href="/kontak">Kontak</Link>, "Kontak", <PhoneOutlined />),
+  { type: "divider" },
   // getItem(<Link href="/master/cabang">Cabang</Link>, "Cabang", <PartitionOutlined />,),
   // getItem(<Link href="/master/pelanggan">Pelanggan</Link>, "Pelanggan", <TeamOutlined />,),
   // getItem( <Link href="/master/aset">Aset</Link>, "Aset", <FolderOpenOutlined />,),
