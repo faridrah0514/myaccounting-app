@@ -1,23 +1,12 @@
 "use client"
 
-import React, { useState } from "react"
-import { Table, Input, Tag, Card, Button, Dropdown, Menu, Flex, Radio, Switch, Typography } from "antd"
+import React, { useState, useEffect } from "react"
+import { Table, Input, Tag, Card, Button, Dropdown, Menu, Flex, Radio, Switch, Typography, message } from "antd"
 import { PlusOutlined, PrinterOutlined, UnorderedListOutlined } from "@ant-design/icons"
 import TambahKontakDrawer from "@/app/components/Contact/TambahKontakDrawer"
+import type { ContactType } from "@/app/types/types"
 
 import type { ColumnsType } from "antd/es/table"
-
-interface KontakData {
-  key: string
-  name: string
-  type: string
-  company: string
-  address: string
-  email: string
-  phone: string
-  andaHutang: number
-  merekaHutang: number
-}
 
 const { Search } = Input
 
@@ -28,42 +17,6 @@ const stats: { label: string; value: string; color: string; count: number }[] = 
   { label: "Hutang Anda Jatuh Tempo", value: "28.997.398", color: "bg-blue-500", count: 46 },
   { label: "Hutang Mereka Jatuh Tempo", value: "36.846.291", color: "bg-pink-500", count: 24 },
   { label: "Pembayaran Dikirim", value: "35.999.212", color: "bg-green-500", count: 47 },
-]
-
-const data: KontakData[] = [
-  {
-    key: "1",
-    name: "Bella Padmasari S.IP Hidayanto",
-    type: "Vendor",
-    company: "CV Novitasari Sudiati",
-    address: "Kpg. Bak Mandi No. 513, NTT",
-    email: "zhutagalung@rahayu.co.id",
-    phone: "626884070548",
-    andaHutang: 0,
-    merekaHutang: 0,
-  },
-  {
-    key: "2",
-    name: "Cinta Anggraini S.T. Purwanti",
-    type: "Vendor",
-    company: "CV Novitasari Tbk",
-    address: "Kpg. Ters. Kiaracondong No. 968, Jakarta Timur 43100",
-    email: "pertiwi.jagaraga@pradipta.co",
-    phone: "625386265599",
-    andaHutang: 5121000,
-    merekaHutang: 0,
-  },
-  {
-    key: "3",
-    name: "Gandi Najmudin Wahyudin",
-    type: "Pelanggan",
-    company: "Perum Pratiwi Susanti",
-    address: "Ds. S. Parman No. 507, Palangka Raya 26274",
-    email: "kpernmata@yahoo.co.id",
-    phone: "621156061135",
-    andaHutang: 2394000,
-    merekaHutang: 886560,
-  },
 ]
 
 const KontakPage: React.FC = () => {
@@ -80,6 +33,7 @@ const KontakPage: React.FC = () => {
   })
   // const [activeTab, setActiveTab] = useState<string>("Semua")
   const [drawerVisible, setDrawerVisible] = useState<boolean>(false)
+  const [contactData, setContactData] = useState<ContactType[]>([])
 
   type ColumnKeys = keyof typeof visibleColumns
 
@@ -87,12 +41,12 @@ const KontakPage: React.FC = () => {
     setVisibleColumns((prev) => ({ ...prev, [key]: !prev[key] }))
   }
 
-  const columns: ColumnsType<KontakData> = [
+  const columns: ColumnsType<ContactType> = [
     { title: "Nama", dataIndex: "name", key: "name", hidden: !visibleColumns.nama },
     {
       title: "Tipe Kontak",
-      dataIndex: "type",
-      key: "type",
+      dataIndex: "contact_type",
+      key: "contact_type",
       hidden: !visibleColumns.tipeKontak,
       render: (type: string) => <Tag>{type}</Tag>,
     },
@@ -119,6 +73,20 @@ const KontakPage: React.FC = () => {
       ))}
     </Menu>
   )
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("/api/contact")
+        const result = await response.json()
+        setContactData(result.contacts)
+      } catch (error) {
+        message.error(`Failed to fetch contact data: ${(error as Error).message}`)
+      }
+    }
+
+    fetchData()
+  }, [])
 
   return (
     <div>
@@ -175,15 +143,16 @@ const KontakPage: React.FC = () => {
 
       {/* Table Section */}
       <Card className="rounded-xl" style={{ overflowX: "auto" }}>
-        <Table<KontakData> columns={columns} dataSource={data} pagination={{ pageSize: 10 }} />
+        <Table<ContactType> columns={columns} dataSource={contactData} pagination={{ pageSize: 10 }} />
       </Card>
 
       {/* Tambah Kontak Drawer */}
       <TambahKontakDrawer
         visible={drawerVisible}
         onClose={() => setDrawerVisible(false)}
-        onSubmit={() => {
-          console.log("Kontak ditambahkan")
+        onSubmit={(data: ContactType[]) => {
+          setContactData(data as ContactType[])
+          message.success("Kontak berhasil ditambahkan")
           setDrawerVisible(false)
         }}
       />

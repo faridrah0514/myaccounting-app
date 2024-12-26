@@ -1,6 +1,6 @@
 import { PrismaClient, Prisma } from "@prisma/client"
 import { NextRequest, NextResponse } from "next/server"
-import { RegionSchema, type RegionType } from "@/app/types/db"
+import { RegionSchema, type RegionType } from "@/app/types/types"
 import { z } from "zod"
 import { toSnakeCase } from "@/app/utils/toSnakeCase"
 
