@@ -1,0 +1,41 @@
+model Contact {
+    id           Int              @id @default(autoincrement())
+    contact_type ContactTypeEnum?
+    name         String
+    phone        String
+    address      String
+    tax_number   String?
+    id_type      IdType?
+    id_number    String?
+
+    province_id String
+    city_id     String
+    district_id String
+    village_id  String
+
+    created_at DateTime @default(now())
+    updated_at DateTime @updatedAt
+
+    RegionProvince Region? @relation("contact_province", fields: [province_id], references: [code])
+    RegionCity     Region? @relation("contact_city", fields: [city_id], references: [code])
+    RegionDistrict Region? @relation("contact_district", fields: [district_id], references: [code])
+    RegionVillage  Region? @relation("contact_village", fields: [village_id], references: [code])
+
+    @@map("contact")
+}
+
+enum ContactTypeEnum {
+    Pelanggan
+    Vendor
+    Pegawai
+    Lainnya
+}
+
+enum IdType {
+    KTP
+    SIM
+    Passport
+    KITAS
+    KITAP
+    Lainnya
+}

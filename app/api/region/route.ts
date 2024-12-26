@@ -1,6 +1,6 @@
 import { PrismaClient, Prisma } from "@prisma/client"
 import { NextRequest, NextResponse } from "next/server"
-import { RegionSchema, type RegionType } from "@/app/types/db"
+import { RegionSchema, type RegionType } from "@/app/types/types"
 import { z } from "zod"
 import { toSnakeCase } from "@/app/utils/toSnakeCase"
 
@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
 
   const whereClause = district ? `${district}.%` : where ? `${where}.__` : "__"
 
-  const query = Prisma.sql`SELECT kode as code, nama as name FROM wilayah WHERE kode LIKE ${whereClause};`
+  const query = Prisma.sql`SELECT code, name as name FROM region WHERE code LIKE ${whereClause};`
   log.info(`Query: ${query.strings}, with where clause: ${whereClause}`)
   const results: RegionType[] = await prisma.$queryRaw(query)
   const validResults = z.array(RegionSchema).parse(results)
