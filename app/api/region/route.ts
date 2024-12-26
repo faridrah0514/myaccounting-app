@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
 
   const whereClause = district ? `${district}.%` : where ? `${where}.__` : "__"
 
-  const query = Prisma.sql`SELECT kode as code, nama as name FROM wilayah WHERE kode LIKE ${whereClause};`
+  const query = Prisma.sql`SELECT code, name as name FROM region WHERE code LIKE ${whereClause};`
   log.info(`Query: ${query.strings}, with where clause: ${whereClause}`)
   const results: RegionType[] = await prisma.$queryRaw(query)
   const validResults = z.array(RegionSchema).parse(results)

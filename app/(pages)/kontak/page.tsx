@@ -1,10 +1,9 @@
 "use client"
 
 import React, { useState } from "react"
-import { useRouter } from "next/navigation"
 import { Table, Input, Tag, Card, Button, Dropdown, Menu, Flex, Radio, Switch, Typography } from "antd"
 import { PlusOutlined, PrinterOutlined, UnorderedListOutlined } from "@ant-design/icons"
-import TambahKontakDrawer from "@/app/components/Kontak/TambahKontakDrawer"
+import TambahKontakDrawer from "@/app/components/Contact/TambahKontakDrawer"
 
 import type { ColumnsType } from "antd/es/table"
 
@@ -68,7 +67,7 @@ const data: KontakData[] = [
 ]
 
 const KontakPage: React.FC = () => {
-  const router = useRouter()
+  // const router = useRouter()
   const [visibleColumns, setVisibleColumns] = useState({
     nama: true,
     tipeKontak: true,
@@ -79,7 +78,7 @@ const KontakPage: React.FC = () => {
     andaHutang: true,
     merekaHutang: true,
   })
-  const [activeTab, setActiveTab] = useState<string>("Semua")
+  // const [activeTab, setActiveTab] = useState<string>("Semua")
   const [drawerVisible, setDrawerVisible] = useState<boolean>(false)
 
   type ColumnKeys = keyof typeof visibleColumns
@@ -165,7 +164,7 @@ const KontakPage: React.FC = () => {
         defaultValue="Semua"
         buttonStyle="solid"
         className="mb-4"
-        onChange={(e) => setActiveTab(e.target.value)}
+        // onChange={(e) => setActiveTab(e.target.value)}
       >
         <Radio.Button value="Semua">Semua</Radio.Button>
         <Radio.Button value="Vendor">Vendor</Radio.Button>

@@ -30,6 +30,24 @@ const TambahKontakDrawer: React.FC<TambahKontakDrawerProps> = ({ visible, onClos
   const [district, setDistrict] = useState<DefaultOptionType[]>([])
   const [village, setVillage] = useState<DefaultOptionType[]>([])
 
+  const handleSubmit = (values: any) => {
+    fetch("/api/contact", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(values),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Success:", data)
+        onSubmit()
+      })
+      .catch((error) => {
+        console.error("Error:", error)
+      })
+  }
+
   const fetchCity = (provinceCode: string) => {
     fetch(`/api/region?province=${provinceCode}`)
       .then((res) => res.json())
@@ -75,21 +93,18 @@ const TambahKontakDrawer: React.FC<TambahKontakDrawerProps> = ({ visible, onClos
       <Form layout="vertical">
         <Form.Item label="Tipe Kontak" name="tipeKontak" rules={[{ required: true }]}>
           <Select placeholder="Pilih tipe kontak">
-            <Option value="personal">Personal</Option>
-            <Option value="perusahaan">Perusahaan</Option>
+            <Option value="Personal">Personal</Option>
+            <Option value="Perusahaan">Perusahaan</Option>
           </Select>
         </Form.Item>
-        <Form.Item label="Nama" name="nama" rules={[{ required: true }]}>
+        <Form.Item label="Nama" name="name" rules={[{ required: true }]}>
           <Input placeholder="Masukkan nama" />
         </Form.Item>
-        <Form.Item label="Telepon sekunder" name="teleponSekunder">
-          <Input placeholder="Telepon sekunder" />
+        <Form.Item label="Telepon" name="phone">
+          <Input placeholder="Telepon" />
         </Form.Item>
-        <Form.Item label="Fax" name="fax">
-          <Input placeholder="Fax" />
-        </Form.Item>
-        <Form.Item label="Alamat Penagihan" name="alamatPenagihan">
-          <Input placeholder="Alamat Penagihan" />
+        <Form.Item label="Alamat" name="address">
+          <Input placeholder="Alamat" />
         </Form.Item>
         <Row gutter={16}>
           <Col span={12}>
@@ -121,7 +136,7 @@ const TambahKontakDrawer: React.FC<TambahKontakDrawerProps> = ({ visible, onClos
         </Row>
         <Row gutter={16}>
           <Col span={12}>
-            <Form.Item label="Tipe Kartu Identitas" name="tipeKartuIdentitas">
+            <Form.Item label="Tipe Kartu Identitas" name="id_type">
               <Select placeholder="Silahkan pilih tipe kartu identitas">
                 <Option value="KTP">KTP</Option>
                 <Option value="SIM">SIM</Option>
@@ -129,12 +144,12 @@ const TambahKontakDrawer: React.FC<TambahKontakDrawerProps> = ({ visible, onClos
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label="ID Kartu Identitas" name="idKartuIdentitas">
+            <Form.Item label="ID Kartu Identitas" name="id_number">
               <Input placeholder="ID Kartu Identitas" />
             </Form.Item>
           </Col>
         </Row>
-        <Form.Item label="NPWP" name="npwp">
+        <Form.Item label="NPWP" name="tax_number">
           <Input placeholder="NPWP" />
         </Form.Item>
         <Row justify="end">
