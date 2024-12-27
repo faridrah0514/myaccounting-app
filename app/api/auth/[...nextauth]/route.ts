@@ -36,7 +36,7 @@ const handler = NextAuth({
           }
 
           // Compare the provided password with the stored hashed password
-          const isPasswordValid = await bcrypt.compare(credentials.password, user.passwordHash)
+          const isPasswordValid = await bcrypt.compare(credentials.password, user.password_hash)
 
           if (isPasswordValid) {
             // Return the user data to include in the session
