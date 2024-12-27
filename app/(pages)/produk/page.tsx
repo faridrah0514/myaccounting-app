@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react"
 import { Table, Input, Card, Button, Dropdown, Menu, Switch, Typography, message, Row, Col, Space } from "antd"
 import { PlusOutlined, PrinterOutlined, UnorderedListOutlined, FilterOutlined } from "@ant-design/icons"
 import type { ColumnsType } from "antd/es/table"
+import { useRouter } from "next/navigation"
 
 const { Search } = Input
 
@@ -20,6 +21,7 @@ const stats = [
 ]
 
 const ProductPage: React.FC = () => {
+  const router = useRouter()
   const [visibleColumns, setVisibleColumns] = useState({
     name: true,
     sku: true,
@@ -101,7 +103,7 @@ const ProductPage: React.FC = () => {
           <Col>
             <Space>
               <Button icon={<PrinterOutlined />}>Print</Button>
-              <Button type="primary" icon={<PlusOutlined />}>
+              <Button type="primary" icon={<PlusOutlined />} onClick={() => router.push("/produk/tambah")}>
                 Tambah Produk
               </Button>
             </Space>

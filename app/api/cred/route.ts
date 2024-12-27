@@ -10,7 +10,15 @@ const log = logger(logTag)
 const prisma = new PrismaClient()
 const SALT_ROUNDS = 10
 
-// GET request to fetch users
+/**
+ * @swagger
+ * /api/cred:
+ *   get:
+ *     summary: GET request to fetch users
+ *     responses:
+ *       200:
+ *         description: A successful response
+ */
 export async function GET() {
   try {
     log.info("Fetching users...")
@@ -19,13 +27,13 @@ export async function GET() {
         id: true,
         username: true,
         role: true,
-        createdAt: true,
+        created_at: true,
       },
     })
 
     const formattedData = users.map((user) => ({
       ...user,
-      createdAt: dayjs(user.createdAt).format("DD-MM-YYYY"),
+      createdAt: dayjs(user.created_at).format("DD-MM-YYYY"),
     }))
 
     return new Response(JSON.stringify({ data: formattedData }), {
@@ -66,7 +74,7 @@ export async function POST(req: NextRequest) {
       await prisma.user.create({
         data: {
           username,
-          passwordHash: hashedPassword,
+          password_hash: hashedPassword,
           role,
           ...(role === "SUPERVISOR" && editable_until ? { editableUntil: editable_until } : {}),
         },
@@ -91,7 +99,7 @@ export async function POST(req: NextRequest) {
       }
 
       // Validate old password
-      const isOldPasswordValid = await bcrypt.compare(oldPassword, user.passwordHash)
+      const isOldPasswordValid = await bcrypt.compare(oldPassword, user.password_hash)
 
       if (!isOldPasswordValid) {
         return NextResponse.json({ message: "Old password is incorrect" }, { status: 400 })
@@ -102,7 +110,7 @@ export async function POST(req: NextRequest) {
 
       await prisma.user.update({
         where: { username },
-        data: { passwordHash: hashedNewPassword },
+        data: { password_hash: hashedNewPassword },
       })
 
       return NextResponse.json({ message: "Password updated successfully" })

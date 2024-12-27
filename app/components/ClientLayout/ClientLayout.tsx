@@ -7,7 +7,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   const pathname = usePathname()
 
   // Define paths where the DefaultLayout should be skipped
-  const isAuthPage = pathname === "/login" // Add other auth pages if needed
+  const isAuthPage = pathname === "/login" || pathname === "/swagger" // Add other auth pages if needed
 
   return isAuthPage ? <>{children}</> : <DefaultLayout>{children}</DefaultLayout>
 }
