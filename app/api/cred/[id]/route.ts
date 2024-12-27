@@ -10,7 +10,50 @@ const SALT_ROUNDS = 10
 const logTag = "cred-id"
 const log = logger(logTag)
 
-// GET request to fetch user details by ID
+/**
+ * @swagger
+ * /api/cred/{id}:
+ *   get:
+ *     summary: Fetch user details by ID
+ *     tags: [Users]
+ *     description: Retrieve user details using the user ID.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The user ID
+ *     responses:
+ *       200:
+ *         description: User details retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                 username:
+ *                   type: string
+ *                 role:
+ *                   type: string
+ *                 created_at:
+ *                   type: string
+ *                   format: date
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Internal server error
+ */
+
+/**
+ * GET request to fetch user details by ID
+ * @param {NextRequest} req - The incoming request object
+ * @param {Object} params - The route parameters
+ * @param {string} params.id - The user ID
+ * @returns {Promise<NextResponse>} The response containing user details or an error message
+ */
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   const userId = params.id
 
@@ -26,7 +69,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
     const formattedUser = {
       ...user,
-      created_at: dayjs(user.createdAt).format("DD-MM-YYYY"),
+      created_at: dayjs(user.created_at).format("DD-MM-YYYY"),
     }
     log.info(`Fetched user details for user ID: ${userId}`)
     return NextResponse.json(formattedUser, { status: 200 })
@@ -36,7 +79,56 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
   }
 }
 
-// PUT request to update user details by ID
+/**
+ * @swagger
+ * /api/cred/{id}:
+ *   put:
+ *     summary: Update user details by ID
+ *     tags: [Users]
+ *     description: Update user details using the user ID.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The user ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               requestType:
+ *                 type: string
+ *               data:
+ *                 type: object
+ *                 properties:
+ *                   username:
+ *                     type: string
+ *                   password:
+ *                     type: string
+ *                   role:
+ *                     type: string
+ *     responses:
+ *       200:
+ *         description: User updated successfully
+ *       400:
+ *         description: Invalid request type or missing required fields
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Internal server error
+ */
+
+/**
+ * PUT request to update user details by ID
+ * @param {NextRequest} req - The incoming request object
+ * @param {Object} params - The route parameters
+ * @param {string} params.id - The user ID
+ * @returns {Promise<NextResponse>} The response indicating success or failure of the update operation
+ */
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
   const userId = params.id
 
@@ -67,7 +159,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
           where: { id: parseInt(userId) },
           data: {
             username,
-            passwordHash: hashedPassword,
+            password_hash: hashedPassword,
             role,
           },
         })
