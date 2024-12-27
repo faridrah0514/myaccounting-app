@@ -5,6 +5,7 @@ import { Table, Input, Card, Button, Dropdown, Menu, Switch, Typography, message
 import { PlusOutlined, PrinterOutlined, UnorderedListOutlined, FilterOutlined } from "@ant-design/icons"
 import type { ColumnsType } from "antd/es/table"
 import { useRouter } from "next/navigation"
+import ProductCategoryListDrawer from "@/app/components/Product/ProductCategoryListDrawer"
 
 const { Search } = Input
 
@@ -33,6 +34,7 @@ const ProductPage: React.FC = () => {
     hpp: true,
   })
   const [productData, setProductData] = useState([])
+  const [drawerVisible, setDrawerVisible] = useState(false)
 
   type ColumnKeys = keyof typeof visibleColumns
 
@@ -82,7 +84,7 @@ const ProductPage: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("/api/products")
+        const response = await fetch("/api/product")
         const result = await response.json()
         setProductData(result.products)
       } catch (error) {
@@ -103,6 +105,9 @@ const ProductPage: React.FC = () => {
           <Col>
             <Space>
               <Button icon={<PrinterOutlined />}>Print</Button>
+              <Button icon={<PlusOutlined />} onClick={() => setDrawerVisible(true)}>
+                Kategori
+              </Button>
               <Button type="primary" icon={<PlusOutlined />} onClick={() => router.push("/produk/tambah")}>
                 Tambah Produk
               </Button>
@@ -111,7 +116,8 @@ const ProductPage: React.FC = () => {
         </Row>
       </Card>
 
-      {/* <Card style={{ overflowX: "auto" }}> */}
+      <ProductCategoryListDrawer visible={drawerVisible} onClose={() => setDrawerVisible(false)} />
+
       <div style={{ overflowX: "auto" }}>
         <Row gutter={16} wrap={false} style={{ flexWrap: "nowrap" }}>
           {stats.map((card, index) => (
@@ -133,7 +139,6 @@ const ProductPage: React.FC = () => {
           ))}
         </Row>
       </div>
-      {/* </Card> */}
 
       <Row justify="space-between" align="middle" gutter={16}>
         <Col>
