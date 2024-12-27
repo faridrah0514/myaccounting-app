@@ -1,5 +1,5 @@
-// config/swagger.js
-const swaggerDefinition = {
+// config/swagger.ts
+const swagger = {
   openapi: "3.0.0",
   info: {
     title: "My Next.js API (App Router)",
@@ -8,10 +8,11 @@ const swaggerDefinition = {
   },
   servers: [
     {
-      url: "http://localhost:3000/api", // Adjust for your deployment
+      url: "http://localhost:3000/", // Adjust for your deployment
     },
   ],
   // You can add other global settings like security, tags, etc.
 }
 
-export default swaggerDefinition
+export default swagger
+// This file contains the global settings for the Swagger documentation. You can add other settings like security, tags, etc. The servers array contains the URL of your deployment. Adjust it to match your deployment URL.
