@@ -1,6 +1,6 @@
 import { z } from "zod"
 
-export const ContactTypeEnumSchema = z.enum(["Perusahaan", "Personal"])
+export const ContactTypeEnumSchema = z.enum(["Pelanggan", "Vendor", "Pegawai", "Lainnya"])
 export const IdTypeEnumSchema = z.enum(["KTP", "SIM", "Passport", "KITAS", "KITAP", "Lainnya"])
 
 // Put the schema here

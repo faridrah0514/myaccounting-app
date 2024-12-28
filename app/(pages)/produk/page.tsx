@@ -33,7 +33,7 @@ const ProductPage: React.FC = () => {
     quantity: true,
     hpp: true,
   })
-  const [productData, setProductData] = useState([])
+  const [productData, setProductData] = useState()
   const [drawerVisible, setDrawerVisible] = useState(false)
 
   type ColumnKeys = keyof typeof visibleColumns
@@ -86,7 +86,8 @@ const ProductPage: React.FC = () => {
       try {
         const response = await fetch("/api/product")
         const result = await response.json()
-        setProductData(result.products)
+        console.log("result --> ", result)
+        setProductData(result)
       } catch (error) {
         message.error(`Failed to fetch product data: ${(error as Error).message}`)
       }
@@ -157,7 +158,7 @@ const ProductPage: React.FC = () => {
       </Row>
 
       <Card className="rounded-xl" style={{ overflowX: "auto" }}>
-        <Table columns={columns} dataSource={productData} pagination={{ pageSize: 10 }} />
+        <Table columns={columns} dataSource={} pagination={{ pageSize: 10 }} />
       </Card>
     </Space>
   )

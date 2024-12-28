@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react"
 import { Drawer, Form, Input, Select, Button, Row, Col, message } from "antd"
 import type { DefaultOptionType } from "antd/es/select"
-import type { ContactType } from "@/app/types/types"
+import { type ContactType, ContactTypeEnumSchema } from "@/app/types/types"
 
 import { z } from "zod"
 
@@ -94,8 +94,11 @@ const TambahKontakDrawer: React.FC<TambahKontakDrawerProps> = ({ visible, onClos
       <Form layout="vertical" onFinish={handleSubmit}>
         <Form.Item label="Tipe Kontak" name="contact_type" rules={[{ required: true }]}>
           <Select placeholder="Pilih tipe kontak">
-            <Option value="Personal">Personal</Option>
-            <Option value="Perusahaan">Perusahaan</Option>
+            {ContactTypeEnumSchema.options.map((type) => (
+              <Option key={type} value={type}>
+                {type}
+              </Option>
+            ))}
           </Select>
         </Form.Item>
         <Form.Item label="Nama" name="name" rules={[{ required: true }]}>
