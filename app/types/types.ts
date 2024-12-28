@@ -39,8 +39,16 @@ export const ProductCategorySchema = z.object({
   updated_at: z.date().optional(),
 })
 
+export const ProductUnitSchema = z.object({
+  id: z.number().optional(),
+  name: z.string(),
+  created_at: z.date().optional(),
+  updated_at: z.date().optional(),
+})
+
 // Put the types here
 export type ContactType = z.infer<typeof ContactSchema>
 export type UserType = z.infer<typeof UserSchema>
 export type RegionType = z.infer<typeof RegionSchema>
 export type ProductCategoryType = z.infer<typeof ProductCategorySchema>
+export type ProductUnitType = z.infer<typeof ProductUnitSchema>
