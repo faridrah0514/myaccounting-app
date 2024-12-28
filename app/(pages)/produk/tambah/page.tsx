@@ -31,9 +31,12 @@ const TambahProduk: React.FC = () => {
 
   useEffect(() => {
     const fetchCategoryData = () => {
-      fetch("/api/product/category")
+      fetch("/api/product")
         .then((response) => response.json())
-        .then((data: { categories: ProductCategoryType[] }) => setCategoryData(data.categories))
+        .then((data: { categories: ProductCategoryType[]; units: ProductUnitType[] }) => {
+          setCategoryData(data.categories)
+          setUnitData(data.units)
+        })
         .catch((error) => message.error("Failed to fetch category data:", error))
     }
 
