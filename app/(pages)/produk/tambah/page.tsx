@@ -1,8 +1,11 @@
 "use client"
 
-import React, { useState } from "react"
-import { Card, Form, Input, Button, Select, Switch, InputNumber, Typography, Row, Col } from "antd"
+import React, { useState, useEffect } from "react"
+import { Card, Form, Input, Button, Select, Switch, InputNumber, Typography, Row, Col, message } from "antd"
 import { useRouter } from "next/navigation"
+import AddProductCategoryDrawer from "@/app/components/Product/AddProductCategoryDrawer"
+import type { ProductCategoryType, ProductUnitType } from "@/app/types/types"
+import AddProductUnitDrawer from "@/app/components/Product/AddProductUnitDrawer"
 
 const { Option } = Select
 const { Title, Text } = Typography
@@ -11,11 +14,31 @@ const TambahProduk: React.FC = () => {
   const [isBuyable, setIsBuyable] = useState<boolean>(true)
   const [isSellable, setIsSellable] = useState<boolean>(true)
   const [isTrackable, setIsTrackable] = useState<boolean>(false)
+  const [productDrawerVisible, setProductDrawerVisible] = useState<boolean>(false)
+  const [unitDrawerVisible, setUnitDrawerVisible] = useState<boolean>(false)
+  const [unitData, setUnitData] = useState<ProductUnitType[]>([])
+  const [categoryData, setCategoryData] = useState<ProductCategoryType[]>([])
   const router = useRouter()
 
   const handleSubmit = (values: any) => {
     console.log("Form Values:", values)
   }
+
+  const showProductCategoryDrawer = () => setProductDrawerVisible(true)
+  const closeProductCategoryDrawer = () => setProductDrawerVisible(false)
+  const showProductUnitDrawer = () => setUnitDrawerVisible(true)
+  const closeProductUnitDrawer = () => setUnitDrawerVisible(false)
+
+  useEffect(() => {
+    const fetchCategoryData = () => {
+      fetch("/api/product/category")
+        .then((response) => response.json())
+        .then((data: { categories: ProductCategoryType[] }) => setCategoryData(data.categories))
+        .catch((error) => message.error("Failed to fetch category data:", error))
+    }
+
+    fetchCategoryData()
+  }, [])
 
   return (
     <Card
@@ -48,9 +71,25 @@ const TambahProduk: React.FC = () => {
               name="kategori"
               rules={[{ required: true, message: "Kategori harus diisi" }]}
             >
-              <Select placeholder="Pilih Kategori">
-                <Option value="kategori1">Kategori 1</Option>
-                <Option value="kategori2">Kategori 2</Option>
+              <Select
+                placeholder="Pilih Kategori"
+                dropdownRender={(menu) => (
+                  <div>
+                    {menu}
+                    <div
+                      style={{ padding: "8px", cursor: "pointer", color: "#1890ff" }}
+                      onClick={showProductCategoryDrawer}
+                    >
+                      + Tambah Kategori
+                    </div>
+                  </div>
+                )}
+              >
+                {categoryData.map((category) => (
+                  <Option key={category.id} value={category.id}>
+                    {category.name}
+                  </Option>
+                ))}
               </Select>
             </Form.Item>
           </Col>
@@ -60,9 +99,25 @@ const TambahProduk: React.FC = () => {
               name="satuan"
               rules={[{ required: true, message: "Satuan harus diisi" }]}
             >
-              <Select placeholder="Pilih Satuan">
-                <Option value="pcs">Pcs</Option>
-                <Option value="kg">Kg</Option>
+              <Select
+                placeholder="Pilih Satuan"
+                dropdownRender={(menu) => (
+                  <div>
+                    {menu}
+                    <div
+                      style={{ padding: "8px", cursor: "pointer", color: "#1890ff" }}
+                      onClick={showProductUnitDrawer}
+                    >
+                      + Tambah Satuan
+                    </div>
+                  </div>
+                )}
+              >
+                {unitData.map((unit) => (
+                  <Option key={unit.id} value={unit.id}>
+                    {unit.name}
+                  </Option>
+                ))}
               </Select>
             </Form.Item>
           </Col>
@@ -128,6 +183,24 @@ const TambahProduk: React.FC = () => {
           </Button>
         </Form.Item>
       </Form>
+
+      <AddProductCategoryDrawer
+        visible={productDrawerVisible}
+        onClose={closeProductCategoryDrawer}
+        onSubmit={(data) => {
+          setCategoryData(data)
+          closeProductCategoryDrawer()
+        }}
+      />
+
+      <AddProductUnitDrawer
+        visible={unitDrawerVisible}
+        onClose={closeProductUnitDrawer}
+        onSubmit={(data) => {
+          setUnitData(data)
+          closeProductUnitDrawer()
+        }}
+      />
     </Card>
   )
 }

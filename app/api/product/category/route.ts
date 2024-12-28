@@ -47,7 +47,7 @@ export async function GET() {
   try {
     log.info("Fetching product categories")
     const categories = await prisma.productCategory.findMany({
-      orderBy: { name: "asc" },
+      orderBy: { id: "asc" },
     })
 
     // Validate the fetched categories using ProductCategorySchema
@@ -115,7 +115,7 @@ export async function POST(request: Request) {
     })
 
     const allcategories = await prisma.productCategory.findMany({
-      orderBy: { name: "asc" },
+      orderBy: { id: "asc" },
     })
 
     // Validate the fetched categories using ProductCategorySchema
