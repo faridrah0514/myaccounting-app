@@ -44,11 +44,11 @@ const ProductPage: React.FC = () => {
 
   const columns: ColumnsType<any> = [
     { title: "Nama", dataIndex: "name", key: "name", hidden: !visibleColumns.name },
-    { title: "Kode/SKU", dataIndex: "sku", key: "sku", hidden: !visibleColumns.sku },
-    { title: "Kategori", dataIndex: "category", key: "category", hidden: !visibleColumns.category },
-    { title: "Satuan", dataIndex: "unit", key: "unit", hidden: !visibleColumns.unit },
-    { title: "Harga Beli", dataIndex: "purchasePrice", key: "purchasePrice", hidden: !visibleColumns.purchasePrice },
-    { title: "Harga Jual", dataIndex: "sellingPrice", key: "sellingPrice", hidden: !visibleColumns.sellingPrice },
+    { title: "Kode/SKU", dataIndex: "code", key: "code", hidden: !visibleColumns.sku },
+    { title: "Kategori", dataIndex: "product_category", key: "product_category", hidden: !visibleColumns.category },
+    { title: "Satuan", dataIndex: "product_unit", key: "product_unit", hidden: !visibleColumns.unit },
+    { title: "Harga Beli", dataIndex: "purchase_price", key: "purchase_price", hidden: !visibleColumns.purchasePrice },
+    { title: "Harga Jual", dataIndex: "sell_price", key: "sell_price", hidden: !visibleColumns.sellingPrice },
     { title: "Qty", dataIndex: "quantity", key: "quantity", hidden: !visibleColumns.quantity },
     { title: "HPP", dataIndex: "hpp", key: "hpp", hidden: !visibleColumns.hpp },
   ].filter((col) => !col.hidden)
@@ -86,8 +86,7 @@ const ProductPage: React.FC = () => {
       try {
         const response = await fetch("/api/product")
         const result = await response.json()
-        console.log("result --> ", result)
-        setProductData(result)
+        setProductData(result.products.map((product: any, index: number) => ({ ...product, key: index })))
       } catch (error) {
         message.error(`Failed to fetch product data: ${(error as Error).message}`)
       }
@@ -158,7 +157,7 @@ const ProductPage: React.FC = () => {
       </Row>
 
       <Card className="rounded-xl" style={{ overflowX: "auto" }}>
-        <Table columns={columns} dataSource={} pagination={{ pageSize: 10 }} />
+        <Table columns={columns} dataSource={productData} pagination={{ pageSize: 10 }} />
       </Card>
     </Space>
   )

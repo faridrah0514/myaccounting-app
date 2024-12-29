@@ -8,7 +8,7 @@
 import { PrismaClient } from "@prisma/client"
 import { NextResponse } from "next/server"
 import logger from "@/app/utils/logger"
-import { ProductCategorySchema, ProductUnitSchema } from "@/app/types/types"
+import { ProductSchema, ProductUnitSchema, ProductCategorySchema } from "@/app/types/types"
 
 const logTag = "product"
 const log = logger(logTag)
@@ -65,6 +65,23 @@ export async function GET() {
     const units = await prisma.productUnit.findMany({
       orderBy: { id: "asc" },
     })
+
+    // const products = await prisma.product.findMany()
+    const products = await prisma.product.findMany({
+      include: {
+        product_category: {
+          select: {
+            name: true,
+          },
+        },
+        product_unit: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    })
+
     // Validate the fetched categories using ProductCategorySchema
     const validatedCategories = ProductCategorySchema.array().safeParse(categories)
     if (!validatedCategories.success) {
@@ -75,9 +92,100 @@ export async function GET() {
     if (!validatedUnits.success) {
       throw new Error("Validation failed for fetched units")
     }
-    return NextResponse.json({ categories: validatedCategories.data, units: validatedUnits.data })
+    // Validate the fetched products using ProductSchema
+    const validatedProducts = ProductSchema.array().safeParse(products)
+    if (!validatedProducts.success) {
+      throw new Error("Validation failed for fetched products")
+    }
+
+    console.log("validatedProducts.data  --> ", validatedProducts.data)
+    return NextResponse.json(
+      {
+        categories: validatedCategories.data,
+        units: validatedUnits.data,
+        products: validatedProducts.data.map((product) => ({
+          ...product,
+          product_category: product.product_category.name,
+          product_unit: product.product_unit.name,
+        })),
+      },
+      { status: 200 }
+    )
   } catch (error) {
     log.error("Failed to fetch product categories", error)
     return NextResponse.json({ message: "Failed to fetch product categories" }, { status: 500 })
+  }
+}
+
+/**
+ * @swagger
+ * /api/product:
+ *   post:
+ *     summary: Create a new product
+ *     tags: [Product]
+ *     description: Create a new product in the database.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Product'
+ *     responses:
+ *       201:
+ *         description: Successfully created a new product.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Product created successfully
+ *       400:
+ *         description: Invalid request data.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Invalid request data
+ *       500:
+ *         description: Failed to create product.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Failed to create product
+ */
+
+export async function POST(request: Request) {
+  try {
+    const data = await request.json()
+
+    const validatedProduct = ProductSchema.safeParse(data)
+    if (!validatedProduct.success) {
+      return NextResponse.json({ message: "Invalid product data" }, { status: 400 })
+    }
+
+    log.info("Creating product")
+    await prisma.product.create({ data: validatedProduct.data })
+
+    const allProducts = await prisma.product.findMany()
+
+    // Validate the fetched products using ProductSchema
+    const validatedProducts = ProductSchema.array().safeParse(allProducts)
+    if (!validatedProducts.success) {
+      throw new Error("Validation failed for fetched products")
+    }
+
+    return NextResponse.json({ products: validatedProducts }, { status: 200 })
+  } catch (error) {
+    log.error("Failed to create product", error)
+    return NextResponse.json({ message: "Failed to create product" }, { status: 500 })
   }
 }
