@@ -79,7 +79,7 @@ const KontakPage: React.FC = () => {
       try {
         const response = await fetch("/api/contact")
         const result = await response.json()
-        setContactData(result.contacts)
+        setContactData(result.contacts.map((contact: ContactType, index: number) => ({ ...contact, key: index })))
       } catch (error) {
         message.error(`Failed to fetch contact data: ${(error as Error).message}`)
       }
@@ -143,7 +143,7 @@ const KontakPage: React.FC = () => {
 
       {/* Table Section */}
       <Card className="rounded-xl" style={{ overflowX: "auto" }}>
-        <Table<ContactType> columns={columns} dataSource={contactData} pagination={{ pageSize: 10 }} />
+        <Table<ContactType> columns={columns} dataSource={contactData} rowKey="key" pagination={{ pageSize: 10 }} />
       </Card>
 
       {/* Tambah Kontak Drawer */}

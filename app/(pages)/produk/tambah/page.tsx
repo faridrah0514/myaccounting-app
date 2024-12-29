@@ -11,17 +11,38 @@ const { Option } = Select
 const { Title, Text } = Typography
 
 const TambahProduk: React.FC = () => {
-  const [isBuyable, setIsBuyable] = useState<boolean>(true)
-  const [isSellable, setIsSellable] = useState<boolean>(true)
-  const [isTrackable, setIsTrackable] = useState<boolean>(false)
+  const [isPurchase, setIsPurchase] = useState<boolean>(true)
+  const [isSell, setIsSell] = useState<boolean>(true)
+  // const [isTrackable, setIsTrackable] = useState<boolean>(false)
   const [productDrawerVisible, setProductDrawerVisible] = useState<boolean>(false)
   const [unitDrawerVisible, setUnitDrawerVisible] = useState<boolean>(false)
   const [unitData, setUnitData] = useState<ProductUnitType[]>([])
   const [categoryData, setCategoryData] = useState<ProductCategoryType[]>([])
+  const [form] = Form.useForm()
   const router = useRouter()
 
   const handleSubmit = (values: any) => {
-    console.log("Form Values:", values)
+    fetch("/api/product", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(values),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok")
+        }
+        return response.json()
+      })
+      .then(() => {
+        message.success("Product added successfully")
+        router.push("/produk")
+      })
+      .catch((error) => {
+        message.error("Failed to add product: " + error.message)
+      })
+      .finally(() => form.resetFields())
   }
 
   const showProductCategoryDrawer = () => setProductDrawerVisible(true)
@@ -66,12 +87,12 @@ const TambahProduk: React.FC = () => {
         </>
       }
     >
-      <Form layout="vertical" onFinish={handleSubmit}>
+      <Form layout="vertical" onFinish={handleSubmit} form={form}>
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item
               label={<Text strong>Kategori</Text>}
-              name="kategori"
+              name="product_category_id"
               rules={[{ required: true, message: "Kategori harus diisi" }]}
             >
               <Select
@@ -99,7 +120,7 @@ const TambahProduk: React.FC = () => {
           <Col span={12}>
             <Form.Item
               label={<Text strong>Satuan</Text>}
-              name="satuan"
+              name="product_unit_id"
               rules={[{ required: true, message: "Satuan harus diisi" }]}
             >
               <Select
@@ -130,41 +151,41 @@ const TambahProduk: React.FC = () => {
           <Col span={12}>
             <Form.Item
               label={<Text strong>Nama Produk</Text>}
-              name="namaProduk"
+              name="name"
               rules={[{ required: true, message: "Nama Produk harus diisi" }]}
             >
               <Input placeholder="Nama Produk" />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item label={<Text strong>Kode/SKU</Text>} name="sku">
+            <Form.Item label={<Text strong>Kode/SKU</Text>} name="code">
               <Input placeholder="SKU/00000" />
             </Form.Item>
           </Col>
         </Row>
 
-        <Form.Item label={<Text strong>Deskripsi</Text>} name="deskripsi">
+        <Form.Item label={<Text strong>Deskripsi</Text>} name="description">
           <Input.TextArea placeholder="Deskripsi" rows={3} />
         </Form.Item>
 
-        <Form.Item>
-          <Switch checked={isBuyable} onChange={setIsBuyable} /> Saya membeli item ini
+        <Form.Item name="is_purchase" valuePropName="checked">
+          <Switch checked onChange={setIsPurchase} /> Saya membeli item ini
         </Form.Item>
 
-        {isBuyable && (
-          <Form.Item label={<Text strong>Harga</Text>} name="hargaBeli">
+        {isPurchase && (
+          <Form.Item label={<Text strong>Harga</Text>} name="purchase_price">
             <InputNumber min={0} style={{ width: "100%" }} placeholder="Harga" />
           </Form.Item>
         )}
 
-        <Form.Item>
-          <Switch checked={isSellable} onChange={setIsSellable} /> Saya menjual item ini
+        <Form.Item valuePropName="checked" name="is_sell">
+          <Switch checked onChange={setIsSell} /> Saya menjual item ini
         </Form.Item>
 
-        {isSellable && (
+        {isSell && (
           <Row gutter={16}>
             <Col span={12}>
-              <Form.Item label={<Text strong>Harga</Text>} name="hargaJual">
+              <Form.Item label={<Text strong>Harga</Text>} name="sell_price">
                 <InputNumber min={0} style={{ width: "100%" }} placeholder="Harga" />
               </Form.Item>
             </Col>
@@ -176,9 +197,9 @@ const TambahProduk: React.FC = () => {
           </Row>
         )}
 
-        <Form.Item>
+        {/* <Form.Item>
           <Switch checked={isTrackable} onChange={setIsTrackable} /> Saya melacak inventori item ini
-        </Form.Item>
+        </Form.Item> */}
 
         <Form.Item>
           <Button type="primary" htmlType="submit" style={{ width: "100%" }}>

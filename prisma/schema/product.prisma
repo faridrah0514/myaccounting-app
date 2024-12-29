@@ -4,6 +4,8 @@ model ProductCategory {
     created_at DateTime @default(now())
     updated_at DateTime @updatedAt
 
+    Product Product[]
+
     @@map("product_category")
 }
 
@@ -13,5 +15,30 @@ model ProductUnit {
     created_at DateTime @default(now())
     updated_at DateTime @updatedAt
 
+    Product Product[]
+
     @@map("product_unit")
+}
+
+model Product {
+    id                  Int      @id @default(autoincrement())
+    name                String
+    code                String?
+    description         String?
+    price               Float?
+    stock               Int?
+    is_purchase         Boolean?
+    purchase_price      Float?
+    is_sell             Boolean?
+    sell_price          Float?
+    product_category_id Int
+    product_unit_id     Int
+    created_at          DateTime @default(now())
+    updated_at          DateTime @updatedAt
+
+    product_category ProductCategory @relation(fields: [product_category_id], references: [id])
+    product_unit     ProductUnit     @relation(fields: [product_unit_id], references: [id])
+
+    @@index([product_category_id], name: "product_category_id")
+    @@map("product")
 }
