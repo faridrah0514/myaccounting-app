@@ -98,15 +98,14 @@ export async function GET() {
       throw new Error("Validation failed for fetched products")
     }
 
-    console.log("validatedProducts.data  --> ", validatedProducts.data)
     return NextResponse.json(
       {
         categories: validatedCategories.data,
         units: validatedUnits.data,
         products: validatedProducts.data.map((product) => ({
           ...product,
-          product_category: product.product_category.name,
-          product_unit: product.product_unit.name,
+          product_category: product.product_category?.name,
+          product_unit: product.product_unit?.name,
         })),
       },
       { status: 200 }
@@ -183,7 +182,7 @@ export async function POST(request: Request) {
       throw new Error("Validation failed for fetched products")
     }
 
-    return NextResponse.json({ products: validatedProducts }, { status: 200 })
+    return NextResponse.json({ products: validatedProducts.data }, { status: 200 })
   } catch (error) {
     log.error("Failed to create product", error)
     return NextResponse.json({ message: "Failed to create product" }, { status: 500 })

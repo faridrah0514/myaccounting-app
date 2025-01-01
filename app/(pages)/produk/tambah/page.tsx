@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { Card, Form, Input, Button, Select, Switch, InputNumber, Typography, Row, Col, message } from "antd"
+import { Card, Form, Input, Button, Select, Switch, Typography, Row, Col, message } from "antd"
 import { useRouter } from "next/navigation"
 import AddProductCategoryDrawer from "@/app/components/Product/AddProductCategoryDrawer"
 import type { ProductCategoryType, ProductUnitType } from "@/app/types/types"
@@ -10,10 +10,25 @@ import AddProductUnitDrawer from "@/app/components/Product/AddProductUnitDrawer"
 const { Option } = Select
 const { Title, Text } = Typography
 
+const currencyFormatter = (value: string | undefined): string => {
+  if (value) {
+    const numericValue = value.replace(/[^\d]/g, "")
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      minimumFractionDigits: 0,
+    }).format(Number(numericValue))
+  }
+  return ""
+}
+
+const numericOnly = (value: string | undefined): number => {
+  return value ? parseFloat(value.replace(/[^\d]/g, "")) || 0 : 0
+}
+
 const TambahProduk: React.FC = () => {
   const [isPurchase, setIsPurchase] = useState<boolean>(true)
   const [isSell, setIsSell] = useState<boolean>(true)
-  // const [isTrackable, setIsTrackable] = useState<boolean>(false)
   const [productDrawerVisible, setProductDrawerVisible] = useState<boolean>(false)
   const [unitDrawerVisible, setUnitDrawerVisible] = useState<boolean>(false)
   const [unitData, setUnitData] = useState<ProductUnitType[]>([])
@@ -22,12 +37,18 @@ const TambahProduk: React.FC = () => {
   const router = useRouter()
 
   const handleSubmit = (values: any) => {
+    const sanitizedValues = {
+      ...values,
+      purchase_price: values.purchase_price ? numericOnly(values.purchase_price) : null,
+      sell_price: values.sell_price ? numericOnly(values.sell_price) : null,
+    }
+
     fetch("/api/product", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(values),
+      body: JSON.stringify(sanitizedValues),
     })
       .then((response) => {
         if (!response.ok) {
@@ -168,38 +189,46 @@ const TambahProduk: React.FC = () => {
           <Input.TextArea placeholder="Deskripsi" rows={3} />
         </Form.Item>
 
-        <Form.Item name="is_purchase" valuePropName="checked">
-          <Switch checked onChange={setIsPurchase} /> Saya membeli item ini
-        </Form.Item>
+        <Row gutter={16}>
+          <Col span={12}>
+            <Form.Item name="is_purchase" valuePropName="checked">
+              <Switch checked onChange={setIsPurchase} /> Saya membeli item ini
+            </Form.Item>
 
-        {isPurchase && (
-          <Form.Item label={<Text strong>Harga</Text>} name="purchase_price">
-            <InputNumber min={0} style={{ width: "100%" }} placeholder="Harga" />
-          </Form.Item>
-        )}
-
-        <Form.Item valuePropName="checked" name="is_sell">
-          <Switch checked onChange={setIsSell} /> Saya menjual item ini
-        </Form.Item>
-
-        {isSell && (
-          <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item label={<Text strong>Harga</Text>} name="sell_price">
-                <InputNumber min={0} style={{ width: "100%" }} placeholder="Harga" />
+            {isPurchase && (
+              <Form.Item label={<Text strong>Harga</Text>} name="purchase_price">
+                <Input
+                  placeholder="Harga"
+                  onChange={(e) => {
+                    const sanitizedValue = numericOnly(e.target.value)
+                    form.setFieldsValue({
+                      purchase_price: currencyFormatter(sanitizedValue.toString()),
+                    })
+                  }}
+                />
               </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Text type="secondary" style={{ cursor: "pointer" }}>
-                + Tampilkan Harga Grosir
-              </Text>
-            </Col>
-          </Row>
-        )}
+            )}
+          </Col>
+          <Col span={12}>
+            <Form.Item valuePropName="checked" name="is_sell">
+              <Switch checked onChange={setIsSell} /> Saya menjual item ini
+            </Form.Item>
 
-        {/* <Form.Item>
-          <Switch checked={isTrackable} onChange={setIsTrackable} /> Saya melacak inventori item ini
-        </Form.Item> */}
+            {isSell && (
+              <Form.Item label={<Text strong>Harga</Text>} name="sell_price">
+                <Input
+                  placeholder="Harga"
+                  onChange={(e) => {
+                    const sanitizedValue = numericOnly(e.target.value)
+                    form.setFieldsValue({
+                      sell_price: currencyFormatter(sanitizedValue.toString()),
+                    })
+                  }}
+                />
+              </Form.Item>
+            )}
+          </Col>
+        </Row>
 
         <Form.Item>
           <Button type="primary" htmlType="submit" style={{ width: "100%" }}>

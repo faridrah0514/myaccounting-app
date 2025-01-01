@@ -47,8 +47,20 @@ const ProductPage: React.FC = () => {
     { title: "Kode/SKU", dataIndex: "code", key: "code", hidden: !visibleColumns.sku },
     { title: "Kategori", dataIndex: "product_category", key: "product_category", hidden: !visibleColumns.category },
     { title: "Satuan", dataIndex: "product_unit", key: "product_unit", hidden: !visibleColumns.unit },
-    { title: "Harga Beli", dataIndex: "purchase_price", key: "purchase_price", hidden: !visibleColumns.purchasePrice },
-    { title: "Harga Jual", dataIndex: "sell_price", key: "sell_price", hidden: !visibleColumns.sellingPrice },
+    {
+      title: "Harga Beli",
+      dataIndex: "purchase_price",
+      key: "purchase_price",
+      hidden: !visibleColumns.purchasePrice,
+      render: (value: number) => `Rp ${value.toLocaleString("id-ID").replace(/,/g, ".")}`,
+    },
+    {
+      title: "Harga Jual",
+      dataIndex: "sell_price",
+      key: "sell_price",
+      hidden: !visibleColumns.sellingPrice,
+      render: (value: number) => `Rp ${value.toLocaleString("id-ID").replace(/,/g, ".")}`,
+    },
     { title: "Qty", dataIndex: "quantity", key: "quantity", hidden: !visibleColumns.quantity },
     { title: "HPP", dataIndex: "hpp", key: "hpp", hidden: !visibleColumns.hpp },
   ].filter((col) => !col.hidden)
