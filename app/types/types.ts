@@ -56,12 +56,13 @@ export const ProductSchema = z.object({
   is_purchase: z.boolean().optional().nullable(),
   purchase_price: z.number().optional().nullable(),
   is_sell: z.boolean().optional().nullable(),
+  sell_price: z.number().optional().nullable(),
   product_category_id: z.number(),
   product_unit_id: z.number(),
   // created_at: z.date().optional(),
   // updated_at: z.date().optional(),
-  product_category: ProductCategorySchema,
-  product_unit: ProductUnitSchema,
+  product_category: ProductCategorySchema.optional(),
+  product_unit: ProductUnitSchema.optional(),
 })
 
 // Put the types here

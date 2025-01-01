@@ -1,4 +1,12 @@
-import { PieChartOutlined, PhoneOutlined, ShopOutlined } from "@ant-design/icons"
+import {
+  CreditCardOutlined,
+  SolutionOutlined,
+  HomeOutlined,
+  ThunderboltOutlined,
+  PieChartOutlined,
+  PhoneOutlined,
+  ShopOutlined,
+} from "@ant-design/icons"
 import type { MenuProps } from "antd"
 import Link from "next/link"
 
@@ -15,9 +23,14 @@ function getItem(label: React.ReactNode, key: React.Key, icon?: React.ReactNode,
 
 //prettier-ignore
 export const items: MenuItem[] = [
-  getItem(<Link href="/produk">Produk</Link>, "Produk", <ShopOutlined />,),
-  { type: "divider" },
-  getItem(<Link href="/biaya">Biaya</Link>, "Biaya", <PieChartOutlined />,),
+  getItem("Penjualan", "penjualan", <CreditCardOutlined />, [
+    getItem(<Link href="/penjualan/overview">Overview</Link>, "Overview", <SolutionOutlined />),
+    getItem(<Link href="/penjualan/tagihan">Tagihan</Link>, "Tagihan", <CreditCardOutlined />),
+    getItem(<Link href="/penjualan/pengiriman">Pengiriman</Link>, "Pengiriman", <ThunderboltOutlined />),
+    getItem(<Link href="/penjualan/pemesanan">Pemesanan</Link>, "Pemesanan", <HomeOutlined />),
+  ]),
+  getItem(<Link href="/biaya">Biaya</Link>, "Biaya", <PieChartOutlined />),
+  getItem(<Link href="/produk">Produk</Link>, "Produk", <ShopOutlined />),
   { type: "divider" },
   getItem(<Link href="/kontak">Kontak</Link>, "Kontak", <PhoneOutlined />),
   { type: "divider" },
@@ -33,4 +46,4 @@ export const items: MenuItem[] = [
   // ),
   // getItem(<Link href="/master/laporan">Laporan</Link>, "Laporan", <InsertRowLeftOutlined />,),
   // getItem(<Link href="/master/other">Lain-Lain</Link>, "Tipe Aset & Sertifikat", <BuildOutlined />,),
-];
+]
