@@ -6,6 +6,7 @@ import { PlusOutlined, PrinterOutlined, UnorderedListOutlined, FilterOutlined } 
 import type { ColumnsType } from "antd/es/table"
 import { useRouter } from "next/navigation"
 import ProductCategoryListDrawer from "@/app/components/Product/ProductCategoryListDrawer"
+import type { ProductType } from "@/app/types/types"
 
 const { Search } = Input
 
@@ -42,7 +43,7 @@ const ProductPage: React.FC = () => {
     setVisibleColumns((prev) => ({ ...prev, [key]: !prev[key] }))
   }
 
-  const columns: ColumnsType<any> = [
+  const columns: ColumnsType<ProductType> = [
     { title: "Nama", dataIndex: "name", key: "name", hidden: !visibleColumns.name },
     { title: "Kode/SKU", dataIndex: "code", key: "code", hidden: !visibleColumns.sku },
     { title: "Kategori", dataIndex: "product_category", key: "product_category", hidden: !visibleColumns.category },
@@ -52,17 +53,29 @@ const ProductPage: React.FC = () => {
       dataIndex: "purchase_price",
       key: "purchase_price",
       hidden: !visibleColumns.purchasePrice,
-      render: (value: number) => `Rp ${value.toLocaleString("id-ID").replace(/,/g, ".")}`,
+      render: (value: number | null) => `Rp ${(value ?? 0).toLocaleString("id-ID").replace(/,/g, ".")}`,
     },
     {
       title: "Harga Jual",
       dataIndex: "sell_price",
       key: "sell_price",
       hidden: !visibleColumns.sellingPrice,
-      render: (value: number) => `Rp ${value.toLocaleString("id-ID").replace(/,/g, ".")}`,
+      render: (value: number | null) => `Rp ${(value ?? 0).toLocaleString("id-ID").replace(/,/g, ".")}`,
     },
-    { title: "Qty", dataIndex: "quantity", key: "quantity", hidden: !visibleColumns.quantity },
-    { title: "HPP", dataIndex: "hpp", key: "hpp", hidden: !visibleColumns.hpp },
+    {
+      title: "Qty",
+      dataIndex: "quantity",
+      key: "quantity",
+      hidden: !visibleColumns.quantity,
+      render: (value: number | null) => value ?? 0,
+    },
+    {
+      title: "HPP",
+      dataIndex: "hpp",
+      key: "hpp",
+      hidden: !visibleColumns.hpp,
+      render: (value: number | null) => value ?? 0,
+    },
   ].filter((col) => !col.hidden)
 
   const columnFilterMenu = (

@@ -32,6 +32,8 @@ export const items: MenuItem[] = [
   getItem(<Link href="/biaya">Biaya</Link>, "Biaya", <PieChartOutlined />),
   getItem(<Link href="/produk">Produk</Link>, "Produk", <ShopOutlined />),
   { type: "divider" },
+  getItem(<Link href="/akun">Akun</Link>, "Akun", <ShopOutlined />),
+  { type: "divider" },
   getItem(<Link href="/kontak">Kontak</Link>, "Kontak", <PhoneOutlined />),
   { type: "divider" },
   // getItem(<Link href="/master/cabang">Cabang</Link>, "Cabang", <PartitionOutlined />,),

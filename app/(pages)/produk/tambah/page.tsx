@@ -1,10 +1,10 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { Card, Form, Input, Button, Select, Switch, Typography, Row, Col, message } from "antd"
+import { Card, Form, Input, Button, Select, Switch, Typography, Row, Col, message, Radio } from "antd"
 import { useRouter } from "next/navigation"
 import AddProductCategoryDrawer from "@/app/components/Product/AddProductCategoryDrawer"
-import type { ProductCategoryType, ProductUnitType } from "@/app/types/types"
+import type { ProductCategoryType, ProductUnitType, ProductType } from "@/app/types/types"
 import AddProductUnitDrawer from "@/app/components/Product/AddProductUnitDrawer"
 
 const { Option } = Select
@@ -22,13 +22,18 @@ const currencyFormatter = (value: string | undefined): string => {
   return ""
 }
 
-const numericOnly = (value: string | undefined): number => {
+const numericOnly = (value: number | string | undefined): number => {
+  if (typeof value === "number") {
+    return value
+  }
   return value ? parseFloat(value.replace(/[^\d]/g, "")) || 0 : 0
 }
 
 const TambahProduk: React.FC = () => {
   const [isPurchase, setIsPurchase] = useState<boolean>(true)
   const [isSell, setIsSell] = useState<boolean>(true)
+  const [isTrackInventory, setIsTrackInventory] = useState<boolean>(false)
+  const [isManualQty, setIsManualQty] = useState<boolean>(false)
   const [productDrawerVisible, setProductDrawerVisible] = useState<boolean>(false)
   const [unitDrawerVisible, setUnitDrawerVisible] = useState<boolean>(false)
   const [unitData, setUnitData] = useState<ProductUnitType[]>([])
@@ -36,7 +41,11 @@ const TambahProduk: React.FC = () => {
   const [form] = Form.useForm()
   const router = useRouter()
 
-  const handleSubmit = (values: any) => {
+  const handleSubmit = (values: ProductType) => {
+    values.is_purchase = isPurchase
+    values.is_sell = isSell
+
+    values.manual_qty = values.qty_type == "manual_qty" ? form.getFieldValue("manual_qty") : 0
     const sanitizedValues = {
       ...values,
       purchase_price: values.purchase_price ? numericOnly(values.purchase_price) : null,
@@ -192,41 +201,87 @@ const TambahProduk: React.FC = () => {
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item name="is_purchase" valuePropName="checked">
-              <Switch checked onChange={setIsPurchase} /> Saya membeli item ini
+              <Switch
+                className="mr-2"
+                checked={isPurchase}
+                onChange={() => {
+                  setIsPurchase(!isPurchase)
+                }}
+              />
+              Saya membeli item ini
             </Form.Item>
 
-            {isPurchase && (
-              <Form.Item label={<Text strong>Harga</Text>} name="purchase_price">
-                <Input
-                  placeholder="Harga"
-                  onChange={(e) => {
-                    const sanitizedValue = numericOnly(e.target.value)
-                    form.setFieldsValue({
-                      purchase_price: currencyFormatter(sanitizedValue.toString()),
-                    })
-                  }}
-                />
-              </Form.Item>
-            )}
+            <Form.Item label={<Text strong>Harga</Text>} name="purchase_price">
+              <Input
+                disabled={!isPurchase}
+                placeholder="Harga"
+                onChange={(e) => {
+                  const sanitizedValue = numericOnly(e.target.value)
+                  form.setFieldsValue({
+                    purchase_price: currencyFormatter(sanitizedValue.toString()),
+                  })
+                }}
+              />
+            </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item valuePropName="checked" name="is_sell">
-              <Switch checked onChange={setIsSell} /> Saya menjual item ini
+              <Switch
+                className="mr-2"
+                checked={isSell}
+                onChange={() => {
+                  setIsSell(!isSell)
+                }}
+              />
+              Saya menjual item ini
             </Form.Item>
 
-            {isSell && (
-              <Form.Item label={<Text strong>Harga</Text>} name="sell_price">
-                <Input
-                  placeholder="Harga"
-                  onChange={(e) => {
-                    const sanitizedValue = numericOnly(e.target.value)
-                    form.setFieldsValue({
-                      sell_price: currencyFormatter(sanitizedValue.toString()),
-                    })
-                  }}
-                />
-              </Form.Item>
-            )}
+            <Form.Item label={<Text strong>Harga</Text>} name="sell_price">
+              <Input
+                disabled={!isSell}
+                placeholder="Harga"
+                onChange={(e) => {
+                  const sanitizedValue = numericOnly(e.target.value)
+                  form.setFieldsValue({
+                    sell_price: currencyFormatter(sanitizedValue.toString()),
+                  })
+                }}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+
+        <Row gutter={16}>
+          <Col span={12}>
+            <Form.Item name="track_inventory" valuePropName="checked">
+              <Switch
+                checked={isTrackInventory}
+                onChange={() => {
+                  setIsTrackInventory(!isTrackInventory)
+                }}
+              />
+              Saya melacak inventori item ini
+            </Form.Item>
+
+            <Form.Item label={<Text strong>Stok minimal</Text>} name="qty_type">
+              <Radio.Group
+                disabled={!isTrackInventory}
+                onChange={(e) => (e.target.value === "manual_qty" ? setIsManualQty(true) : setIsManualQty(false))}
+              >
+                <Radio value="business_flow_qty" style={{ marginRight: 10, marginBottom: 10 }}>
+                  Sesuai pengaturan alur bisnis
+                </Radio>
+                <Radio value="manual_qty">
+                  <Input
+                    placeholder="Masukkan jumlah qty"
+                    disabled={!isManualQty}
+                    onChange={(e) => {
+                      form.setFieldValue("manual_qty", e.target.value)
+                    }}
+                  />
+                </Radio>
+              </Radio.Group>
+            </Form.Item>
           </Col>
         </Row>
 
