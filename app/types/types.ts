@@ -59,10 +59,51 @@ export const ProductSchema = z.object({
   sell_price: z.number().optional().nullable(),
   product_category_id: z.number(),
   product_unit_id: z.number(),
+  manual_qty: z.number().optional().nullable(),
+  qty_type: z.string().optional().nullable(),
   // created_at: z.date().optional(),
   // updated_at: z.date().optional(),
   product_category: ProductCategorySchema.optional(),
   product_unit: ProductUnitSchema.optional(),
+})
+
+export const FinanceAccountCategorySchema = z.object({
+  id: z.number().optional(),
+  name: z.string(),
+  debit_normal_account: z.number().optional().nullable(),
+  // created_at: z.date().optional(),
+  // updated_at: z.date().optional(),
+  // accounts: z.array(z.lazy(() => FinanceAccountSchema)).optional(),
+})
+
+export const FinanceAccountSchema: z.ZodSchema = z.object({
+  id: z.number().optional(),
+  name: z.string(),
+  ref_code: z.string().optional().nullable(),
+  finance_account_category_id: z.number(),
+  is_locked: z.number(),
+  parent_id: z.number().optional().nullable(),
+  is_parent: z.number(),
+  currency_id: z.number().optional().nullable(),
+  desc: z.string().optional().nullable(),
+  is_deletable: z.boolean(),
+  balance: z.number().optional().nullable(),
+  max_date: z.string().optional().nullable(),
+  // created_at: z.date().optional(),
+  // updated_at: z.date().optional(),
+  // parent: z
+  //   .lazy(() => FinanceAccountSchema)
+  //   .optional()
+  //   .nullable(),
+  parent: z
+    .lazy((): z.ZodSchema => FinanceAccountSchema)
+    .optional()
+    .nullable(),
+  children: z.array(z.lazy((): z.ZodSchema => FinanceAccountSchema)).optional(),
+  category: z
+    .lazy((): z.ZodSchema => FinanceAccountCategorySchema)
+    .optional()
+    .nullable(),
 })
 
 // Put the types here
@@ -72,3 +113,5 @@ export type RegionType = z.infer<typeof RegionSchema>
 export type ProductCategoryType = z.infer<typeof ProductCategorySchema>
 export type ProductUnitType = z.infer<typeof ProductUnitSchema>
 export type ProductType = z.infer<typeof ProductSchema>
+export type AccountCategoryType = z.infer<typeof FinanceAccountCategorySchema>
+export type FinanceAccountType = z.infer<typeof FinanceAccountSchema>

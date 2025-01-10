@@ -2,9 +2,12 @@
   "name": "myaccounting-app",
   "version": "0.1.0",
   "private": true,
+  "prisma": {
+   "seed": "node prisma/seed.js"
+  },
   "scripts": {
-    "dev": "prisma migrate deploy && next dev",
-    "start": "prisma migrate deploy && next start",
+    "dev": "prisma migrate deploy && prisma db seed && next dev",
+    "start": "prisma migrate deploy && prisma db seed && next start",
     "build": "next build",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
@@ -37,7 +40,7 @@
   },
   "devDependencies": {
     "@types/lodash": "^4.17.13",
-    "@types/node": "^20",
+    "@types/node": "^20.17.12",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@types/swagger-ui-react": "^4.18.3",
@@ -52,6 +55,7 @@
     "prettier": "^3.4.1",
     "prisma": "^6.1.0",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5"
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2"
   }
 }
