@@ -15,7 +15,7 @@ interface AddProductUnitDrawerProps {
 const AddProductUnitDrawer: React.FC<AddProductUnitDrawerProps> = ({ visible, onClose, onSubmit }) => {
   const [form] = useForm<ProductUnitType>()
   const handleFormSubmit = (values: ProductUnitType) => {
-    fetch("/api/product/unit", {
+    fetch("/api/products/units", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

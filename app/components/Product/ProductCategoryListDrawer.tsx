@@ -20,7 +20,7 @@ const ProductCategoryListDrawer: React.FC<ProductCategoryListDrawerProps> = ({ v
 
   useEffect(() => {
     const fetchCategoryData = () => {
-      fetch("/api/product/category")
+      fetch("/api/products/categories")
         .then((response) => response.json())
         .then((data: { categories: ProductCategoryType[] }) => setCategoryData(data.categories))
         .catch((error) => message.error("Failed to fetch category data:", error))

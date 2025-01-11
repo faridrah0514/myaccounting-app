@@ -45,19 +45,19 @@ const TambahProduk: React.FC = () => {
     values.is_purchase = isPurchase
     values.is_sell = isSell
 
-    values.manual_qty = values.qty_type == "manual_qty" ? form.getFieldValue("manual_qty") : 0
-    const sanitizedValues = {
+    values.stock = values.qty_type == "manual_qty" ? numericOnly(form.getFieldValue("manual_qty")) : 0
+    const payload = {
       ...values,
       purchase_price: values.purchase_price ? numericOnly(values.purchase_price) : null,
       sell_price: values.sell_price ? numericOnly(values.sell_price) : null,
     }
 
-    fetch("/api/product", {
+    fetch("/api/products", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(sanitizedValues),
+      body: JSON.stringify(payload),
     })
       .then((response) => {
         if (!response.ok) {
@@ -82,7 +82,7 @@ const TambahProduk: React.FC = () => {
 
   useEffect(() => {
     const fetchCategoryData = () => {
-      fetch("/api/product")
+      fetch("/api/products")
         .then((response) => response.json())
         .then((data: { categories: ProductCategoryType[]; units: ProductUnitType[] }) => {
           setCategoryData(data.categories)
@@ -268,13 +268,15 @@ const TambahProduk: React.FC = () => {
                 disabled={!isTrackInventory}
                 onChange={(e) => (e.target.value === "manual_qty" ? setIsManualQty(true) : setIsManualQty(false))}
               >
-                <Radio value="business_flow_qty" style={{ marginRight: 10, marginBottom: 10 }}>
+                <Radio disabled value="business_flow_qty" style={{ marginRight: 10, marginBottom: 10 }}>
                   Sesuai pengaturan alur bisnis
                 </Radio>
                 <Radio value="manual_qty">
                   <Input
+                    type="number"
                     placeholder="Masukkan jumlah qty"
                     disabled={!isManualQty}
+                    min={0}
                     onChange={(e) => {
                       form.setFieldValue("manual_qty", e.target.value)
                     }}

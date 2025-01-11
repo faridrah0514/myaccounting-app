@@ -15,7 +15,7 @@ interface AddProductCategoryDrawerProps {
 const AddProductCategoryDrawer: React.FC<AddProductCategoryDrawerProps> = ({ visible, onClose, onSubmit }) => {
   const [form] = useForm<ProductCategoryType>()
   const handleFormSubmit = (values: ProductCategoryType) => {
-    fetch("/api/product/category", {
+    fetch("/api/products/categories", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -7,6 +7,7 @@ import type { ColumnsType } from "antd/es/table"
 import { useRouter } from "next/navigation"
 import ProductCategoryListDrawer from "@/app/components/Product/ProductCategoryListDrawer"
 import type { ProductType } from "@/app/types/types"
+import Link from "next/link"
 
 const { Search } = Input
 
@@ -31,7 +32,7 @@ const ProductPage: React.FC = () => {
     unit: true,
     purchasePrice: true,
     sellingPrice: true,
-    quantity: true,
+    stock: true,
     hpp: true,
   })
   const [productData, setProductData] = useState()
@@ -44,7 +45,17 @@ const ProductPage: React.FC = () => {
   }
 
   const columns: ColumnsType<ProductType> = [
-    { title: "Nama", dataIndex: "name", key: "name", hidden: !visibleColumns.name },
+    {
+      title: "Nama",
+      dataIndex: "name",
+      key: "name",
+      hidden: !visibleColumns.name,
+      render: (text: string, record: ProductType) => (
+        <Link href={`/produk/detail/${record.id}`} style={{ color: "#1890ff" }}>
+          {text}
+        </Link>
+      ),
+    },
     { title: "Kode/SKU", dataIndex: "code", key: "code", hidden: !visibleColumns.sku },
     { title: "Kategori", dataIndex: "product_category", key: "product_category", hidden: !visibleColumns.category },
     { title: "Satuan", dataIndex: "product_unit", key: "product_unit", hidden: !visibleColumns.unit },
@@ -64,9 +75,9 @@ const ProductPage: React.FC = () => {
     },
     {
       title: "Qty",
-      dataIndex: "quantity",
-      key: "quantity",
-      hidden: !visibleColumns.quantity,
+      dataIndex: "stock",
+      key: "stock",
+      hidden: !visibleColumns.stock,
       render: (value: number | null) => value ?? 0,
     },
     {
@@ -109,7 +120,7 @@ const ProductPage: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("/api/product")
+        const response = await fetch("/api/products")
         const result = await response.json()
         setProductData(result.products.map((product: any, index: number) => ({ ...product, key: index })))
       } catch (error) {
@@ -182,7 +193,7 @@ const ProductPage: React.FC = () => {
       </Row>
 
       <Card className="rounded-xl" style={{ overflowX: "auto" }}>
-        <Table columns={columns} dataSource={productData} pagination={{ pageSize: 10 }} />
+        <Table columns={columns} dataSource={productData} pagination={{ pageSize: 100 }} />
       </Card>
     </Space>
   )

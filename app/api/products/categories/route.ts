@@ -16,7 +16,7 @@ const prisma = new PrismaClient()
 
 /**
  * @swagger
- * /api/product/category:
+ * /api/products/categories:
  *   get:
  *     summary: Fetch all product categories
  *     tags: [ProductCategory]
@@ -55,7 +55,7 @@ export async function GET() {
     if (!validatedCategories.success) {
       throw new Error("Validation failed for fetched categories")
     }
-    return NextResponse.json({ categories })
+    return NextResponse.json({ categories: validatedCategories })
   } catch (error) {
     log.error("Failed to fetch product categories", error)
     return NextResponse.json({ message: error }, { status: 500 })
@@ -64,7 +64,7 @@ export async function GET() {
 
 /**
  * @swagger
- * /api/product/category:
+ * /api/products/categories:
  *   post:
  *     summary: Create a new product category
  *     tags: [ProductCategory]
