@@ -16,7 +16,7 @@ const prisma = new PrismaClient()
 
 /**
  * @swagger
- * /api/product:
+ * /api/products:
  *   get:
  *     summary: Fetch all product categories and units
  *     tags: [Product]
@@ -95,6 +95,7 @@ export async function GET() {
     // Validate the fetched products using ProductSchema
     const validatedProducts = ProductSchema.array().safeParse(products)
     if (!validatedProducts.success) {
+      log.error("Validation failed for fetched products", validatedProducts.error)
       throw new Error("Validation failed for fetched products")
     }
 
@@ -118,7 +119,7 @@ export async function GET() {
 
 /**
  * @swagger
- * /api/product:
+ * /api/products:
  *   post:
  *     summary: Create a new product
  *     tags: [Product]
@@ -168,6 +169,7 @@ export async function POST(request: Request) {
 
     const validatedProduct = ProductSchema.safeParse(data)
     if (!validatedProduct.success) {
+      log.error("Invalid product data", validatedProduct.error)
       return NextResponse.json({ message: "Invalid product data" }, { status: 400 })
     }
 

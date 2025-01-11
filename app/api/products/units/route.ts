@@ -16,7 +16,7 @@ const prisma = new PrismaClient()
 
 /**
  * @swagger
- * /api/product/unit:
+ * /api/products/units:
  *   get:
  *     summary: Fetch all product units
  *     tags: [ProductUnit]
@@ -64,7 +64,7 @@ export async function GET() {
 
 /**
  * @swagger
- * /api/product/unit:
+ * /api/products/units:
  *   post:
  *     summary: Create a new product unit
  *     tags: [ProductUnit]

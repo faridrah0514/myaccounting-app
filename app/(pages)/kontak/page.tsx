@@ -74,17 +74,16 @@ const KontakPage: React.FC = () => {
     </Menu>
   )
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch("/api/contact")
-        const result = await response.json()
-        setContactData(result.contacts.map((contact: ContactType, index: number) => ({ ...contact, key: index })))
-      } catch (error) {
-        message.error(`Failed to fetch contact data: ${(error as Error).message}`)
-      }
+  const fetchData = async () => {
+    try {
+      const response = await fetch("/api/contact")
+      const result = await response.json()
+      setContactData(result.contacts.map((contact: ContactType, index: number) => ({ ...contact, key: index })))
+    } catch (error) {
+      message.error(`Failed to fetch contact data: ${(error as Error).message}`)
     }
-
+  }
+  useEffect(() => {
     fetchData()
   }, [])
 

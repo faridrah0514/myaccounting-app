@@ -33,6 +33,8 @@ model Product {
     sell_price          Float?
     product_category_id Int
     product_unit_id     Int
+    qty_type            String?
+    // manual_qty          Int?
     created_at          DateTime @default(now())
     updated_at          DateTime @updatedAt
 

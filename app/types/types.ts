@@ -28,78 +28,69 @@ export const ContactSchema = z.object({
   city_id: z.string(),
   district_id: z.string(),
   village_id: z.string(),
-  // created_at: z.date().optional(),
-  // updated_at: z.date().optional(),
 })
 
 export const ProductCategorySchema = z.object({
   id: z.number().optional(),
   name: z.string(),
-  // created_at: z.date().optional(),
-  // updated_at: z.date().optional(),
 })
 
 export const ProductUnitSchema = z.object({
   id: z.number().optional(),
   name: z.string(),
-  // created_at: z.date().optional(),
-  // updated_at: z.date().optional(),
 })
 
 export const ProductSchema = z.object({
-  id: z.number().optional(),
+  id: z.number().optional().nullable(),
   name: z.string(),
   code: z.string().optional().nullable(),
   description: z.string().optional().nullable(),
   price: z.number().optional().nullable(),
   stock: z.number().optional().nullable(),
-  is_purchase: z.boolean().optional().nullable(),
-  purchase_price: z.number().optional().nullable(),
-  is_sell: z.boolean().optional().nullable(),
-  sell_price: z.number().optional().nullable(),
+  is_purchase: z.boolean().nullable(),
+  purchase_price: z.number().nullable(),
+  is_sell: z.boolean().nullable(),
+  sell_price: z.number().nullable(),
   product_category_id: z.number(),
   product_unit_id: z.number(),
-  manual_qty: z.number().optional().nullable(),
-  qty_type: z.string().optional().nullable(),
-  // created_at: z.date().optional(),
-  // updated_at: z.date().optional(),
-  product_category: ProductCategorySchema.optional(),
-  product_unit: ProductUnitSchema.optional(),
+  qty_type: z.string().nullable(),
+  product_category: z
+    .lazy(() => ProductCategorySchema)
+    .optional()
+    .nullable(),
+  product_unit: z
+    .lazy(() => ProductUnitSchema)
+    .optional()
+    .nullable(),
 })
 
 export const FinanceAccountCategorySchema = z.object({
   id: z.number().optional(),
   name: z.string(),
   debit_normal_account: z.number().optional().nullable(),
-  // created_at: z.date().optional(),
-  // updated_at: z.date().optional(),
-  // accounts: z.array(z.lazy(() => FinanceAccountSchema)).optional(),
 })
 
 export const FinanceAccountSchema: z.ZodSchema = z.object({
   id: z.number().optional(),
   name: z.string(),
-  ref_code: z.string().optional().nullable(),
+  ref_code: z.string(),
   finance_account_category_id: z.number(),
-  is_locked: z.number(),
+  is_locked: z.number().optional().nullable(),
   parent_id: z.number().optional().nullable(),
-  is_parent: z.number(),
+  is_parent: z.number().optional().nullable(),
   currency_id: z.number().optional().nullable(),
   desc: z.string().optional().nullable(),
-  is_deletable: z.boolean(),
+  is_deletable: z.boolean().optional().nullable(),
   balance: z.number().optional().nullable(),
   max_date: z.string().optional().nullable(),
-  // created_at: z.date().optional(),
-  // updated_at: z.date().optional(),
-  // parent: z
-  //   .lazy(() => FinanceAccountSchema)
-  //   .optional()
-  //   .nullable(),
   parent: z
     .lazy((): z.ZodSchema => FinanceAccountSchema)
     .optional()
     .nullable(),
-  children: z.array(z.lazy((): z.ZodSchema => FinanceAccountSchema)).optional(),
+  children: z
+    .array(z.lazy((): z.ZodSchema => FinanceAccountSchema))
+    .optional()
+    .nullable(),
   category: z
     .lazy((): z.ZodSchema => FinanceAccountCategorySchema)
     .optional()
@@ -113,5 +104,5 @@ export type RegionType = z.infer<typeof RegionSchema>
 export type ProductCategoryType = z.infer<typeof ProductCategorySchema>
 export type ProductUnitType = z.infer<typeof ProductUnitSchema>
 export type ProductType = z.infer<typeof ProductSchema>
-export type AccountCategoryType = z.infer<typeof FinanceAccountCategorySchema>
+export type FinanceAccountCategoryType = z.infer<typeof FinanceAccountCategorySchema>
 export type FinanceAccountType = z.infer<typeof FinanceAccountSchema>
