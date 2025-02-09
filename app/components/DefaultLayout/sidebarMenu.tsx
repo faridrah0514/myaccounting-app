@@ -6,6 +6,9 @@ import {
   PieChartOutlined,
   PhoneOutlined,
   ShopOutlined,
+  PartitionOutlined,
+  BankOutlined,
+  AccountBookOutlined,
 } from "@ant-design/icons"
 import type { MenuProps } from "antd"
 import Link from "next/link"
@@ -32,11 +35,12 @@ export const items: MenuItem[] = [
   getItem(<Link href="/biaya">Biaya</Link>, "Biaya", <PieChartOutlined />),
   getItem(<Link href="/produk">Produk</Link>, "Produk", <ShopOutlined />),
   { type: "divider" },
-  getItem(<Link href="/akun">Akun</Link>, "Akun", <ShopOutlined />),
+  getItem(<Link href="/bank">Kas & Bank</Link>, "Kas & Bank", <BankOutlined />),
+  getItem(<Link href="/akun">Akun</Link>, "Akun", <AccountBookOutlined />),
   { type: "divider" },
   getItem(<Link href="/kontak">Kontak</Link>, "Kontak", <PhoneOutlined />),
   { type: "divider" },
-  // getItem(<Link href="/master/cabang">Cabang</Link>, "Cabang", <PartitionOutlined />,),
+  getItem(<Link href="/warehouses">Warehouse</Link>, "Warehouse", <PartitionOutlined />,),
   // getItem(<Link href="/master/pelanggan">Pelanggan</Link>, "Pelanggan", <TeamOutlined />,),
   // getItem( <Link href="/master/aset">Aset</Link>, "Aset", <FolderOpenOutlined />,),
   // getItem(<Link href="/master/transaksi">Transaksi</Link>, "transaksi", <CreditCardOutlined />,

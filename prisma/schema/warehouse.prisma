@@ -1,0 +1,12 @@
+model Warehouse {
+  id             Int             @id @default(autoincrement())
+  warehouse_name String
+  warehouse_code String
+  description    String?
+  created_at     DateTime        @default(now())
+  updated_at     DateTime        @updatedAt
+  StockMovement  StockMovement[]
+  Stock          Stock[]
+
+  @@map("warehouse")
+}

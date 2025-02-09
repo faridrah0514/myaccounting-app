@@ -76,7 +76,7 @@ const KontakPage: React.FC = () => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch("/api/contact")
+      const response = await fetch("/api/contacts")
       const result = await response.json()
       setContactData(result.contacts.map((contact: ContactType, index: number) => ({ ...contact, key: index })))
     } catch (error) {

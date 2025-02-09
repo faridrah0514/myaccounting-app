@@ -1,46 +1,48 @@
 model ProductCategory {
-    id         Int      @id @default(autoincrement())
-    name       String
-    created_at DateTime @default(now())
-    updated_at DateTime @updatedAt
+  id         Int      @id @default(autoincrement())
+  name       String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
-    Product Product[]
+  Product Product[]
 
-    @@map("product_category")
+  @@map("product_category")
 }
 
 model ProductUnit {
-    id         Int      @id @default(autoincrement())
-    name       String
-    created_at DateTime @default(now())
-    updated_at DateTime @updatedAt
+  id         Int      @id @default(autoincrement())
+  name       String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
-    Product Product[]
+  Product Product[]
 
-    @@map("product_unit")
+  @@map("product_unit")
 }
 
 model Product {
-    id                  Int      @id @default(autoincrement())
-    name                String
-    code                String?
-    description         String?
-    price               Float?
-    stock               Int?
-    is_purchase         Boolean?
-    purchase_price      Float?
-    is_sell             Boolean?
-    sell_price          Float?
-    product_category_id Int
-    product_unit_id     Int
-    qty_type            String?
-    // manual_qty          Int?
-    created_at          DateTime @default(now())
-    updated_at          DateTime @updatedAt
+  id                  Int      @id @default(autoincrement())
+  name                String
+  code                String?
+  description         String?
+  price               Float?
+  stock               Int?
+  is_purchase         Boolean?
+  purchase_price      Float?
+  is_sell             Boolean?
+  sell_price          Float?
+  product_category_id Int
+  product_unit_id     Int
+  qty_type            String?
+  // manual_qty          Int?
+  created_at          DateTime @default(now())
+  updated_at          DateTime @updatedAt
 
-    product_category ProductCategory @relation(fields: [product_category_id], references: [id])
-    product_unit     ProductUnit     @relation(fields: [product_unit_id], references: [id])
+  product_category ProductCategory @relation(fields: [product_category_id], references: [id])
+  product_unit     ProductUnit     @relation(fields: [product_unit_id], references: [id])
+  StockMovement    StockMovement[]
+  Stock            Stock[]
 
-    @@index([product_category_id], name: "product_category_id")
-    @@map("product")
+  @@index([product_category_id], name: "product_category_id")
+  @@map("product")
 }

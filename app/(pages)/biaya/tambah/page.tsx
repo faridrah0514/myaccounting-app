@@ -1,13 +1,14 @@
 // Import necessary modules and components
 "use client"
 import React, { useState, useEffect } from "react"
-import { Card, Form, Input, Button, Select, message, DatePicker, Switch, Row, Col, Upload, Table } from "antd"
-import { UploadOutlined, MinusCircleOutlined, PlusOutlined } from "@ant-design/icons"
+import { Card, Form, Input, Button, Select, message, DatePicker, Switch, Row, Col, Table } from "antd"
+import { PlusOutlined } from "@ant-design/icons"
 import { useRouter } from "next/navigation"
 import dayjs from "dayjs"
 import TambahKontakDrawer from "@/app/components/Contact/TambahKontakDrawer"
 import TambahAkunDrawer from "@/app/components/Account/TambahAkunDrawer"
-
+import { flattenAccounts } from "@/app/utils/utils"
+import getColumns from "./columns"
 const { Option } = Select
 
 const BiayaTambah: React.FC = () => {
@@ -15,9 +16,20 @@ const BiayaTambah: React.FC = () => {
   const [isDrawerVisible, setIsDrawerVisible] = useState(false)
   const [isAkunDrawerVisible, setIsAkunDrawerVisible] = useState(false)
   const [akunBiayaData, setAkunBiayaData] = useState<any[]>([])
+  const [accounts, setAccounts] = useState<any[]>([])
   const router = useRouter()
 
+  const getAccounts = async () => {
+    const response = await fetch("/api/accounts")
+    const data = await response.json()
+    const accounts = data.finance_accounts
+      .flatMap((account: any) => flattenAccounts([account]))
+      .filter((account: any) => account.category.name === "Kas & Bank")
+    setAccounts(accounts)
+  }
+
   useEffect(() => {
+    getAccounts()
     // Add an initial empty row when the component mounts
     setAkunBiayaData([{ key: Date.now(), akun: "", deskripsi: "", pajak: "", total: 0 }])
   }, [])
@@ -48,76 +60,12 @@ const BiayaTambah: React.FC = () => {
     setAkunBiayaData(updatedData)
   }
 
-  const columns = [
-    {
-      title: "Akun Biaya",
-      dataIndex: "akun",
-      render: (_: any, record: any) => (
-        <Select
-          placeholder="Pilih sumber"
-          allowClear
-          value={record.akun}
-          onChange={(value) => onFieldChange(record.key, "akun", value)}
-          style={{ width: "100%" }}
-          dropdownRender={(menu) => (
-            <div>
-              {menu}
-              <div style={{ padding: "8px", cursor: "pointer", color: "#1890ff" }} onClick={showAkunDrawer}>
-                + Tambah Akun
-              </div>
-            </div>
-          )}
-        >
-          <Option value="1-10001 Kas">1-10001 Kas</Option>
-        </Select>
-      ),
-    },
-    {
-      title: "Deskripsi",
-      dataIndex: "deskripsi",
-      render: (_: any, record: any) => (
-        <Input
-          placeholder="Deskripsi"
-          value={record.deskripsi}
-          onChange={(e) => onFieldChange(record.key, "deskripsi", e.target.value)}
-        />
-      ),
-    },
-    {
-      title: "Pajak",
-      dataIndex: "pajak",
-      render: (_: any, record: any) => (
-        <Select
-          placeholder="Pilih pajak"
-          value={record.pajak}
-          onChange={(value) => onFieldChange(record.key, "pajak", value)}
-          style={{ width: "100%" }}
-        >
-          <Option value="0">0%</Option>
-          <Option value="10">10%</Option>
-        </Select>
-      ),
-    },
-    {
-      title: "Total",
-      dataIndex: "total",
-      render: (_: any, record: any) => (
-        <Input
-          placeholder="0"
-          value={record.total}
-          onChange={(value) => onFieldChange(record.key, "total", value)}
-          style={{ width: "100%" }}
-        />
-      ),
-    },
-    {
-      title: "",
-      dataIndex: "action",
-      render: (_: any, record: any) => (
-        <MinusCircleOutlined onClick={() => removeTableRow(record.key)} style={{ cursor: "pointer" }} />
-      ),
-    },
-  ]
+  const columns = getColumns({
+    onFieldChange,
+    removeTableRow,
+    showAkunDrawer,
+  })
+
   // Form submission handler
   const onFinish = async (values: any) => {
     setLoading(true)
@@ -178,7 +126,11 @@ const BiayaTambah: React.FC = () => {
                   </div>
                 )}
               >
-                <Option value="1-10001 Kas">1-10001 Kas</Option>
+                {accounts.map((account) => (
+                  <Option key={account.id} value={account.id}>
+                    {account.ref_code} - {account.name}
+                  </Option>
+                ))}
               </Select>
             </Form.Item>
           </Col>
@@ -263,12 +215,12 @@ const BiayaTambah: React.FC = () => {
               <Input.TextArea rows={3} placeholder="Pesan" style={{ height: "100%" }} />
             </Form.Item>
             {/* Attachment */}
-            <Form.Item label="Attachment" name="attachment" style={{ marginBottom: "0" }}>
+            {/* <Form.Item label="Attachment" name="attachment" style={{ marginBottom: "0" }}>
               <Upload beforeUpload={() => false} maxCount={1}>
                 <Button icon={<UploadOutlined />}>Klik atau seret file ke sini</Button>
               </Upload>
               <small>File size maximal 10 MB</small>
-            </Form.Item>
+            </Form.Item> */}
           </Col>
           <Col
             span={12}

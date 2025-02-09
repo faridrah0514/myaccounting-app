@@ -32,7 +32,7 @@ const TambahKontakDrawer: React.FC<TambahKontakDrawerProps> = ({ visible, onClos
   const [village, setVillage] = useState<DefaultOptionType[]>([])
 
   const handleSubmit = (values: ContactType) => {
-    fetch("/api/contact", {
+    fetch("/api/contacts", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

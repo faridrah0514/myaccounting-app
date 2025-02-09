@@ -255,6 +255,7 @@ const TambahProduk: React.FC = () => {
           <Col span={12}>
             <Form.Item name="track_inventory" valuePropName="checked">
               <Switch
+                className="mr-2"
                 checked={isTrackInventory}
                 onChange={() => {
                   setIsTrackInventory(!isTrackInventory)
