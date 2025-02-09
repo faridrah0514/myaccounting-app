@@ -27,6 +27,7 @@ import {
 } from "@ant-design/icons"
 import type { ColumnsType } from "antd/es/table"
 import type { FinanceAccountType, FinanceAccountCategoryType } from "@/app/types/types"
+import { flattenAccounts } from "@/app/utils/utils"
 
 const { Title } = Typography
 const { Option } = Select
@@ -109,7 +110,6 @@ const AkunPage: React.FC = () => {
   }, [])
 
   const handleFormSubmit = (values: FinanceAccountType) => {
-    console.log("values --> ", values)
     fetch("/api/accounts", {
       method: "POST",
       headers: {
@@ -141,21 +141,11 @@ const AkunPage: React.FC = () => {
         form.resetFields()
       })
   }
+
   const onFinish = (values: FinanceAccountType) => {
     handleFormSubmit(values)
   }
-  const flattenAccounts = (accounts: FinanceAccountType[]) => {
-    const result: FinanceAccountType[] = []
 
-    accounts.forEach((account) => {
-      result.push(account) // Add the current account
-      if (account.children && account.children.length > 0) {
-        result.push(...flattenAccounts(account.children)) // Recursively add children
-      }
-    })
-
-    return result
-  }
   return (
     <Card>
       <Row justify="space-between" align="middle" style={{ marginBottom: 16 }}>

@@ -1,34 +1,34 @@
 model FinanceAccountCategory {
-    id                   Int      @id @default(autoincrement())
-    name                 String
-    debit_normal_account Int?
-    created_at           DateTime @default(now())
-    updated_at           DateTime @updatedAt
+  id                   Int      @id @default(autoincrement())
+  name                 String
+  debit_normal_account Int?
+  created_at           DateTime @default(now())
+  updated_at           DateTime @updatedAt
 
-    FinanceAccount FinanceAccount[]
+  FinanceAccount FinanceAccount[]
 
-    @@map("finance_account_categories")
+  @@map("finance_account_categories")
 }
 
 model FinanceAccount {
-    id                          Int      @id @default(autoincrement())
-    name                        String   @db.VarChar(255)
-    ref_code                    String   @unique @db.VarChar(50)
-    finance_account_category_id Int
-    is_locked                   Int?
-    parent_id                   Int?
-    is_parent                   Int?
-    currency_id                 Int?
-    desc                        String?  @db.Text
-    is_deletable                Boolean?
-    balance                     Float?   @default(0)
-    max_date                    String?
-    created_at                  DateTime @default(now())
-    updated_at                  DateTime @updatedAt
+  id                          Int      @id @default(autoincrement())
+  name                        String   @db.VarChar(255)
+  ref_code                    String   @unique @db.VarChar(50)
+  finance_account_category_id Int
+  is_locked                   Int?
+  parent_id                   Int?
+  is_parent                   Int?
+  currency_id                 Int?
+  desc                        String?  @db.Text
+  is_deletable                Boolean?
+  balance                     Float?   @default(0)
+  max_date                    String?
+  created_at                  DateTime @default(now())
+  updated_at                  DateTime @updatedAt
 
-    parent   FinanceAccount?         @relation("Parent", fields: [parent_id], references: [id])
-    children FinanceAccount[]        @relation("Parent")
-    category FinanceAccountCategory? @relation(fields: [finance_account_category_id], references: [id])
+  parent   FinanceAccount?         @relation("Parent", fields: [parent_id], references: [id])
+  children FinanceAccount[]        @relation("Parent")
+  category FinanceAccountCategory? @relation(fields: [finance_account_category_id], references: [id])
 
-    @@map("finance_accounts")
+  @@map("finance_accounts")
 }

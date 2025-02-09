@@ -97,6 +97,54 @@ export const FinanceAccountSchema: z.ZodSchema = z.object({
     .nullable(),
 })
 
+export const WarehouseSchema = z.object({
+  id: z.number().optional(),
+  warehouse_name: z.string(),
+  warehouse_code: z.string(),
+  description: z.string().optional().nullable(),
+})
+
+export const StockMovementSchema = z.object({
+  id: z.number().optional(),
+  business_tran_id: z.number().optional().nullable(),
+  trans_type_id: z.number().optional().nullable(),
+  product_id: z.number(),
+  trans_date: z.string().or(z.date()).pipe(z.coerce.date()),
+  warehouse_id: z.number(),
+  account_id: z.number(),
+  qty: z.number().int(),
+  qty_movement: z.number().int(),
+  description: z.string().optional().nullable(),
+  avg_price: z
+    .union([z.number(), z.object({}).transform((obj) => Number(obj.toString()))])
+    .optional()
+    .nullable(),
+  price: z
+    .union([z.number(), z.object({}).transform((obj) => Number(obj.toString()))])
+    .optional()
+    .nullable(),
+  code: z.string().optional().nullable(),
+  trans_type: z.string().optional().nullable(),
+  reference: z.string().optional().nullable(),
+  valid: z.boolean().optional().nullable(),
+  created_at: z.date().optional(),
+  updated_at: z.date().optional(),
+  product: z.lazy(() => ProductSchema).optional(),
+  warehouse: z.lazy(() => WarehouseSchema).optional(),
+})
+
+export const StockSchema = z.object({
+  id: z.number().optional(),
+  product_id: z.number(),
+  warehouse_id: z.number(),
+  quantity: z.number().int(),
+  last_updated: z.date().optional(),
+  created_at: z.date().optional(),
+  updated_at: z.date().optional(),
+  product: z.lazy(() => ProductSchema).optional(),
+  warehouse: z.lazy(() => WarehouseSchema).optional(),
+})
+
 // Put the types here
 export type ContactType = z.infer<typeof ContactSchema>
 export type UserType = z.infer<typeof UserSchema>
@@ -106,3 +154,6 @@ export type ProductUnitType = z.infer<typeof ProductUnitSchema>
 export type ProductType = z.infer<typeof ProductSchema>
 export type FinanceAccountCategoryType = z.infer<typeof FinanceAccountCategorySchema>
 export type FinanceAccountType = z.infer<typeof FinanceAccountSchema>
+export type WarehouseType = z.infer<typeof WarehouseSchema>
+export type StockMovementType = z.infer<typeof StockMovementSchema>
+export type StockType = z.infer<typeof StockSchema>

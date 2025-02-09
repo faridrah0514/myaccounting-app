@@ -1,4 +1,6 @@
-export default function currencyFormatter(value: string | undefined): string {
+import type { FinanceAccountType } from "@/app/types/types"
+
+export function currencyFormatter(value: string | undefined): string {
   if (value) {
     const numericValue = value.replace(/[^\d]/g, "")
     return new Intl.NumberFormat("id-ID", {
@@ -21,12 +23,26 @@ export function numberToCurrency(value: number): string {
     minimumFractionDigits: 0,
   }).format(value)
 }
+
 export function currencyToNumber(value: string | undefined): number {
   if (value) {
     const numericValue = value.replace(/[^\d]/g, "")
     return Number(numericValue)
   }
   return 0
+}
+
+export const flattenAccounts = (accounts: FinanceAccountType[]): FinanceAccountType[] => {
+  const result: FinanceAccountType[] = []
+
+  accounts.forEach((account) => {
+    result.push(account) // Add the current account
+    if (account.children && account.children.length > 0) {
+      result.push(...flattenAccounts(account.children)) // Recursively add children
+    }
+  })
+
+  return result
 }
 // export function dateFormatter(value: string): string {
 //   return new Date(value).toLocaleDateString("id-ID", {

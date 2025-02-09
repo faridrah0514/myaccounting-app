@@ -95,7 +95,7 @@ const prisma = new PrismaClient()
 
 /**
  * @swagger
- * /api/contact:
+ * /api/contacts:
  *   post:
  *     summary: Create a new contact
  *     tags: [Contacts]
@@ -150,7 +150,7 @@ export async function POST(request: NextRequest) {
 
 /**
  * @swagger
- * /api/contact:
+ * /api/contacts:
  *   get:
  *     summary: Get all contacts
  *     tags: [Contacts]

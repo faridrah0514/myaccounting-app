@@ -1,13 +1,13 @@
 "use client"
 import React from "react"
-import { Card, Row, Col, Typography, Divider } from "antd"
+import { Card, Row, Col, Typography, Divider, Button } from "antd"
 
-const { Text, Link } = Typography
+const { Text, Link, Title } = Typography
 
 const InventoryDetails = () => {
   const data = {
     kategori: "baju",
-    deskripsi: "laptopu",
+    deskripsi: "laptop",
     gudang: {
       name: "PUSAT",
       quantity: 89,
@@ -27,18 +27,22 @@ const InventoryDetails = () => {
   }
 
   return (
-    <Card bordered={false} style={{ maxWidth: 600, margin: "0 auto" }}>
+    <Card className="border-0" style={{ maxWidth: 600, margin: "0 auto" }}>
       <Row gutter={[16, 16]}>
         <Col span={24}>
           <Row>
-            <Text strong>Kategori</Text>
+            <Title level={4} strong>
+              Kategori
+            </Title>
           </Row>
           <Row>
             <Text>{data.kategori}</Text>
           </Row>
           <Divider className="mt-1 mb-5" />
           <Row>
-            <Text strong>Deskripsi</Text>
+            <Title level={4} strong>
+              Deskripsi
+            </Title>
           </Row>
           <Row>
             <Text>{data.deskripsi}</Text>
@@ -47,7 +51,9 @@ const InventoryDetails = () => {
           <Row>
             <Col span={24}>
               <Row>
-                <Text strong>Gudang</Text>
+                <Title level={4} strong>
+                  Gudang
+                </Title>
               </Row>
               <Row>
                 <Col span={8}>
@@ -62,7 +68,9 @@ const InventoryDetails = () => {
           <Divider className="mt-1 mb-5" />
         </Col>
         <Col span={24}>
-          <Text strong>Pembelian</Text>
+          <Title level={4} strong>
+            Pembelian
+          </Title>
           <Row>
             <Col span={8}>
               <Text>Harga</Text>
@@ -84,9 +92,10 @@ const InventoryDetails = () => {
           </Row>
           <Divider className="mt-1 mb-5" />
         </Col>
-        {/* <Divider className="mt-1 mb-5" /> */}
         <Col span={24}>
-          <Text strong>Penjualan</Text>
+          <Title level={4} strong>
+            Penjualan
+          </Title>
           <Row>
             <Col span={8}>
               <Text>Harga</Text>
@@ -108,9 +117,10 @@ const InventoryDetails = () => {
           </Row>
           <Divider className="mt-1 mb-5" />
         </Col>
-        {/* <Divider className="mt-1 mb-5" /> */}
         <Col span={24}>
-          <Text strong>Inventori</Text>
+          <Title level={4} strong>
+            Inventori
+          </Title>
           <Row>
             <Col span={8}>
               <Text>Akun Aset Inventori</Text>
@@ -123,9 +133,10 @@ const InventoryDetails = () => {
           </Row>
           <Divider className="mt-1 mb-5" />
         </Col>
-        {/* <Divider className="mt-1 mb-5" /> */}
         <Col span={24}>
-          <Text strong>Satuan</Text>
+          <Title level={4} strong>
+            Satuan
+          </Title>
           <Row>
             <Col span={8}>
               <Text>Satuan Dasar</Text>
@@ -136,7 +147,9 @@ const InventoryDetails = () => {
           </Row>
           <Divider className="mt-1 mb-5" />
         </Col>
-        {/* <Divider className="mt-1 mb-5" /> */}
+        <Button type="primary" icon="+">
+          Tambah konversi satuan
+        </Button>
       </Row>
     </Card>
   )

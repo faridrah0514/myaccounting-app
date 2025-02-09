@@ -1,5 +1,5 @@
 "use client"
-import React from "react"
+import React, { useState, useEffect } from "react"
 import { Bar, Doughnut, Line } from "react-chartjs-2"
 import {
   Chart as ChartJS,
@@ -13,18 +13,57 @@ import {
   PointElement,
   LineElement,
 } from "chart.js"
-import { Card, Row, Col, Button, Dropdown, Menu, Typography, Space, Divider, Tabs, Table } from "antd"
-import { ArrowLeftOutlined, PrinterOutlined, EllipsisOutlined } from "@ant-design/icons"
+import { Card, Row, Col, Button, Dropdown, Menu, Typography, Space, message, Tabs, Table } from "antd"
+import { ArrowLeftOutlined, PrinterOutlined, MoreOutlined } from "@ant-design/icons"
 import InventoryDetails from "./InventoryDetails"
 import { useRouter } from "next/navigation"
-
+import StockAdjustmentDrawer from "@/app/components/Product/StockAdjustmentDrawer"
+import type { FinanceAccountType, FinanceAccountCategoryType, WarehouseType } from "@/app/types/types"
 
 // Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend, ArcElement)
 
-const ProductDetailPage = ({ params }: { params: { id: string } }) => {
+const ProductDetailPage = ({ params }: { params: { id: number } }) => {
+  const [isAdjustmentOpen, setIsAdjustmentOpen] = useState(false)
+  const [accountData, setAccountData] = useState<{
+    finance_accounts: FinanceAccountType[]
+    finance_account_categories: FinanceAccountCategoryType[]
+  }>()
+  const [warehouseData, setWarehouseData] = useState<WarehouseType[]>()
   const router = useRouter()
   const { id } = params
+
+  const handleOpenAdjustment = () => setIsAdjustmentOpen(true)
+  const handleCloseAdjustment = () => setIsAdjustmentOpen(false)
+
+  const fetchData = async () => {
+    try {
+      const [accountData, warehouseData] = await Promise.all([
+        fetch("/api/accounts").then((res) => res.json()),
+        fetch("/api/warehouses").then((res) => res.json()),
+      ])
+
+      setAccountData({
+        finance_accounts: accountData.finance_accounts.map((account: FinanceAccountType, index: number) => ({
+          ...account,
+          key: index,
+        })),
+        finance_account_categories: accountData.finance_account_categories.map(
+          (category: FinanceAccountCategoryType, index: number) => ({
+            ...category,
+            key: index,
+          })
+        ),
+      })
+      setWarehouseData(warehouseData.warehouses)
+    } catch (error) {
+      message.error("Gagal mengambil data akun: " + (error as Error).message)
+    }
+  }
+
+  useEffect(() => {
+    fetchData()
+  }, [])
 
   const chartData = {
     labels: ["Agt", "Sep", "Okt", "Nov", "Des", "Jan"],
@@ -207,79 +246,141 @@ const ProductDetailPage = ({ params }: { params: { id: string } }) => {
           </Button>
         </Col>
       </Row>
-
-      <Row gutter={16} style={{ display: "flex", alignItems: "stretch", marginTop: "10px" }}>
-        <Col span={18} style={{ display: "flex", flexDirection: "column" }}>
-          <Row gutter={16}>
-            {stats.map((stat, index) => (
-              <Col span={6} key={index}>
-                <Card>
-                  <Space align="center" size="middle">
-                    <Card
-                      style={{
-                        width: "40px",
-                        height: "40px",
-                        borderRadius: "50%",
-                        backgroundColor: stat.color,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        color: "#fff",
-                        fontSize: "16px",
-                        textAlign: "center",
-                      }}
-                    >
-                      {stat.prefix || 0}
-                    </Card>
-                    <Space direction="vertical" size={0}>
-                      <Typography.Title level={5} style={{ margin: 0 }}>
-                        Rp {stat.value.toLocaleString("id-ID")}
-                      </Typography.Title>
-                      <Typography.Text>{stat.title}</Typography.Text>
+      <Card
+        title={
+          <Space align="center" style={{ justifyContent: "flex-end", width: "100%" }}>
+            <Button type="primary" style={{ marginRight: "8px" }} onClick={handleOpenAdjustment}>
+              + Penyesuaian Stok
+            </Button>
+            <Button icon={<PrinterOutlined />} style={{ marginRight: "8px" }}>
+              Print
+            </Button>
+            <Dropdown
+              overlay={
+                <Menu>
+                  <Menu.Item key="1">Option 1</Menu.Item>
+                  <Menu.Item key="2">Option 2</Menu.Item>
+                </Menu>
+              }
+            >
+              <Button type="text">
+                <MoreOutlined style={{ fontSize: "20px", fontWeight: "bold" }} />
+              </Button>
+            </Dropdown>
+          </Space>
+        }
+      >
+        <Row gutter={16} style={{ display: "flex", alignItems: "stretch", marginTop: "10px" }}>
+          <Col span={18} style={{ display: "flex", flexDirection: "column" }}>
+            <Row gutter={16}>
+              {stats.map((stat, index) => (
+                <Col span={6} key={index}>
+                  <Card>
+                    <Space align="center" size="middle">
+                      <Card
+                        style={{
+                          width: "40px",
+                          height: "40px",
+                          borderRadius: "50%",
+                          backgroundColor: stat.color,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          color: "#fff",
+                          fontSize: "16px",
+                          textAlign: "center",
+                        }}
+                      >
+                        {stat.prefix || 0}
+                      </Card>
+                      <Space direction="vertical" size={0}>
+                        <Typography.Title level={5} style={{ margin: 0 }}>
+                          Rp {stat.value.toLocaleString("id-ID")}
+                        </Typography.Title>
+                        <Typography.Text>{stat.title}</Typography.Text>
+                      </Space>
                     </Space>
-                  </Space>
-                </Card>
+                  </Card>
+                </Col>
+              ))}
+            </Row>
+            <Row>
+              <Col span={24}>
+                <Typography.Title className="mt-5 mb-5" level={4}>
+                  Penjualan Pembelian
+                </Typography.Title>
+                <div style={{ flex: 1, display: "flex" }}>
+                  <Bar data={chartData} options={chartOptions} style={{ flex: 1 }} />
+                </div>
               </Col>
-            ))}
-          </Row>
-          <Row>
-            <Col span={24} >
-              <Typography.Title className="mt-5 mb-5" level={4}>Penjualan Pembelian</Typography.Title>
-              <div style={{ flex: 1, display: "flex"}}>
-                <Bar data={chartData} options={chartOptions} style={{ flex: 1 }} />
-              </div>
-            </Col>
-          </Row>
-          <Row gutter={24}>
-            <Col span={16}>
-              <Typography.Title level={4}>Pergerakan Stock</Typography.Title>
-              <div style={{ height: "400px" }}>
-                <Bar data={movementChartData} options={movementChartOptions} />
-              </div>
-            </Col>
-            <Col span={8}>
-              <Typography.Title level={4}>Lokasi Gudang</Typography.Title>
-              <div style={{ height: "400px" }}>
-                <Doughnut data={locationDonutData} options={locationDonutOptions} />
-              </div>
-            </Col>
-          </Row>
-          <Tabs defaultActiveKey="1" style={{ marginTop: "24px" }}>
-            <Tabs.TabPane tab="Transaksi Terkini" key="1">
-              <Table columns={columns} dataSource={data} pagination={{ pageSize: 10 }} />
-            </Tabs.TabPane>
-            <Tabs.TabPane tab="Pergerakan Stok" key="2">
-              <Typography.Text>Content for Pergerakan Stok</Typography.Text>
-            </Tabs.TabPane>
-            <Tabs.TabPane tab="Transfer Gudang" key="3">
-              <Typography.Text>Content for Transfer Gudang</Typography.Text>
-            </Tabs.TabPane>
-          </Tabs>
-        </Col>
-        <Col span={6} style={{ display: "flex", flexDirection: "column" }}>
-          <InventoryDetails />
-        </Col>
-      </Row>
+            </Row>
+            <Row gutter={24}>
+              <Col span={16}>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: "8px",
+                  }}
+                >
+                  <Typography.Title level={4} style={{ margin: 0 }}>
+                    Pergerakan Stock
+                  </Typography.Title>
+                  <Dropdown
+                    menu={{
+                      items: [
+                        { key: "daily", label: "Harian" },
+                        { key: "monthly", label: "Bulanan" },
+                        { key: "yearly", label: "Tahunan" },
+                      ],
+                      onClick: ({ key }) => {
+                        // Handle period change here
+                        console.log("Selected period:", key)
+                      },
+                    }}
+                    trigger={["click"]}
+                  >
+                    <Button type="text">
+                      <MoreOutlined style={{ fontSize: "15px", fontWeight: "bold" }} />
+                    </Button>
+                  </Dropdown>
+                </div>
+                <div style={{ height: "400px" }}>
+                  <Bar data={movementChartData} options={movementChartOptions} />
+                </div>
+              </Col>
+              <Col span={8}>
+                <Typography.Title level={4}>Lokasi Gudang</Typography.Title>
+                <div style={{ height: "400px" }}>
+                  <Doughnut data={locationDonutData} options={locationDonutOptions} />
+                </div>
+              </Col>
+            </Row>
+            <Tabs defaultActiveKey="1" style={{ marginTop: "24px" }}>
+              <Tabs.TabPane tab="Transaksi Terkini" key="1">
+                <Table columns={columns} dataSource={data} pagination={{ pageSize: 10 }} />
+              </Tabs.TabPane>
+              <Tabs.TabPane tab="Pergerakan Stok" key="2">
+                <Typography.Text>Content for Pergerakan Stok</Typography.Text>
+              </Tabs.TabPane>
+              <Tabs.TabPane tab="Transfer Gudang" key="3">
+                <Typography.Text>Content for Transfer Gudang</Typography.Text>
+              </Tabs.TabPane>
+            </Tabs>
+          </Col>
+          <Col span={6} style={{ display: "flex", flexDirection: "column" }}>
+            <InventoryDetails />
+          </Col>
+        </Row>
+      </Card>
+      <StockAdjustmentDrawer
+        productId={id}
+        visible={isAdjustmentOpen}
+        onClose={handleCloseAdjustment}
+        accountData={accountData?.finance_accounts}
+        warehouseData={warehouseData}
+      />
     </Space>
   )
 }

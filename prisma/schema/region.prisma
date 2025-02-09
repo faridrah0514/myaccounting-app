@@ -64,14 +64,14 @@
 // }
 
 model Region {
-    id   Int    @id @default(autoincrement())
-    code String @unique
-    name String
+  id   Int    @id @default(autoincrement())
+  code String @unique
+  name String
 
-    ContactProvince Contact[] @relation("contact_province")
-    ContactCity     Contact[] @relation("contact_city")
-    ContactDistrict Contact[] @relation("contact_district")
-    ContactVillage  Contact[] @relation("contact_village")
+  ContactProvince Contact[] @relation("contact_province")
+  ContactCity     Contact[] @relation("contact_city")
+  ContactDistrict Contact[] @relation("contact_district")
+  ContactVillage  Contact[] @relation("contact_village")
 
-    @@map("region")
+  @@map("region")
 }

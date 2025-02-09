@@ -44,3 +44,4 @@ DEST_DIR*/
 env/
 prisma/migrations/
 .vscode/
+rest-client/
