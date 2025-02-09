@@ -30,6 +30,7 @@ const TambahKontakDrawer: React.FC<TambahKontakDrawerProps> = ({ visible, onClos
   const [city, setCity] = useState<DefaultOptionType[]>([])
   const [district, setDistrict] = useState<DefaultOptionType[]>([])
   const [village, setVillage] = useState<DefaultOptionType[]>([])
+  const [form] = Form.useForm()
 
   const handleSubmit = (values: ContactType) => {
     fetch("/api/contacts", {
@@ -46,6 +47,9 @@ const TambahKontakDrawer: React.FC<TambahKontakDrawerProps> = ({ visible, onClos
       })
       .catch((error) => {
         message.error(`Failed to submit contact: ${error.message}`)
+      })
+      .finally(() => {
+        form.resetFields()
       })
   }
 
@@ -79,7 +83,7 @@ const TambahKontakDrawer: React.FC<TambahKontakDrawerProps> = ({ visible, onClos
       })
   }
 
-  useEffect(() => {
+  const fetchRegion = () => {
     fetch("/api/region")
       .then((res) => res.json())
       .then((data: RegionResponseType) => {
@@ -87,11 +91,15 @@ const TambahKontakDrawer: React.FC<TambahKontakDrawerProps> = ({ visible, onClos
           setProvince(data.region.map((item: RegionType) => ({ label: item.name, value: item.code })))
         }
       })
+  }
+
+  useEffect(() => {
+    fetchRegion()
   }, [])
 
   return (
     <Drawer title="Tambah Kontak" placement="right" visible={visible} onClose={onClose} width={480}>
-      <Form layout="vertical" onFinish={handleSubmit}>
+      <Form layout="vertical" onFinish={handleSubmit} form={form}>
         <Form.Item label="Tipe Kontak" name="contact_type" rules={[{ required: true }]}>
           <Select placeholder="Pilih tipe kontak">
             {ContactTypeEnumSchema.options.map((type) => (
